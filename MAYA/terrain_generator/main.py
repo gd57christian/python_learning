@@ -10,19 +10,21 @@ LIST_OF_ROCK_GROUPS = cmds.ls(sl=False)
 NEW_ROCK_GROUP_LIST=[]
 
 # todo review and fix the code & name convention
+# todo move functions to modules
 
 # ###################################   WINDOWS FUNCTIONS  #########################
 
 # creating the main menu window for the terrain creator
+
 def MainWindow():
-    # providing initial defults values for variables
+    # providing initial defaults values for variables
     MainWindow.terrain_width = int(500);         MainWindow.terrain_height = int(500)
     MainWindow.range_value_x = 0.0;              MainWindow.range_value_z = 0.0
     MainWindow.range_value_height = 0.0;         MainWindow.range_value_depth = 0.0
     MainWindow.frequency_ind = 20;               MainWindow.CompType = 0
     MainWindow.soft_select = False;              MainWindow.soft_select_radius = 20
     MainWindow.animation_time = 0.0;             MainWindow.rock_amount = 20
-    MainWindow.RockRIUserX = 30.0;               MainWindow.RockRIUserZ = 30.0
+    MainWindow.rock_range_x = 30.0;              MainWindow.rock_range_z = 30.0
     MainWindow.rock_place_on_terrain = False;    MainWindow.rock_max_radius = 6
     MainWindow.terrain_name = "Terrain";         MainWindow.rock_place_on_selection = False
     MainWindow.ocean_button = False;             MainWindow.text_file_choice = ""
@@ -40,18 +42,18 @@ def MainWindow():
     # ----------------------------------- TABCHILD 1 ---------------------
     tab_child1 = cmds.rowColumnLayout(adj=True, numberOfColumns=1)
     cmds.text("\nProvide name for the Terrain that will be generated\n",align="left")
-    MainWindow.TerName_=cmds.textField(tx="Terrain", cc="F_MenuWin.TerrainName=cmds.textField(F_MenuWin.TerName_, q=True, tx=True)")
+    MainWindow.terrain_name_ = cmds.textField(tx="Terrain", cc="MainWindow.terrain_name = cmds.textField(MainWindow.terrain_name_, q=True, tx=True)")
     cmds.separator(st='in', w=450, h=25)
     cmds.text(l="What is the width of the terrain?", align="left")
-    MainWindow.TerrainWidth_=cmds.intSliderGrp(l="Min:", min=100, max=1000, f=True, v=500, cc="F_MenuWin.TerrainWidth=cmds.intSliderGrp(F_MenuWin.TerrainWidth_,q=True, v=True)")
+    MainWindow.terrain_width_ = cmds.intSliderGrp(l="Min:", min=100, max=1000, f=True, v=500, cc="MainWindow.TerrainWidth=cmds.intSliderGrp(MainWindow.terrain_width_,q=True, v=True)")
     cmds.text(l="What is the height of the terrain?",align="left")    
-    MainWindow.TerrainHeight_=cmds.intSliderGrp(l="Min:", min=100, max=1000, f=True, v=500, cc="F_MenuWin.TerrainHeight=cmds.intSliderGrp(F_MenuWin.TerrainHeight_,q=True, v=True)")
+    MainWindow.terrain_height_ = cmds.intSliderGrp(l="Min:", min=100, max=1000, f=True, v=500, cc="MainWindow.TerrainHeight=cmds.intSliderGrp(MainWindow.terrain_height_,q=True, v=True)")
     cmds.separator(st='in', w=450, h=20)
     # here I created the sliders to user define number of subdivisions width and height
     cmds.text(l="How many width subdivisions?", align="left")
-    MainWindow.TerrainSW=cmds.intSliderGrp(l="Min:", min=10, max=100, f=True, v=30)
+    MainWindow.terrain_subdivisions_width = cmds.intSliderGrp(l="Min:", min=10, max=100, f=True, v=30)
     cmds.text(l="How many height subdivisions?", align="left")
-    MainWindow.TerrainSH=cmds.intSliderGrp(l="Max:", min=10, max=100, f=True, v=30)
+    MainWindow.terrain_subdivisions_height = cmds.intSliderGrp(l="Max:", min=10, max=100, f=True, v=30)
     cmds.separator(st='in', w=450, h=20)
 
     # here a button is created to build the terrain
@@ -75,43 +77,43 @@ def MainWindow():
     # ---------------------------------------- TABCHILD 2 ---------------------
     tab_child2 = cmds.rowColumnLayout(adj= True,numberOfColumns=1)
     cmds.text("\nPlease provide the range you desire", align="left")
-    MainWindow.RIUserX_ = cmds.floatSliderGrp(l="Range for X", f=True, min=0, max=10, v=0,
-                                              cc="F_MenuWin.RIValueX=cmds.floatSliderGrp(F_MenuWin.RIUserX_,q=True,v=True)")
+    MainWindow.range_x_ = cmds.floatSliderGrp(l="Range for X", f=True, min=0, max=10, v=0,
+                                              cc="MainWindow.RIValueX = cmds.floatSliderGrp(MainWindow.range_x_,q=True,v=True)")
     MainWindow.RIUserZ_ = cmds.floatSliderGrp(l="Range for Z", f=True, min=0, max=10, v=0,
-                                              cc="F_MenuWin.RIValueZ=cmds.floatSliderGrp(F_MenuWin.RIUserZ_,q=True,v=True)")
+                                              cc="MainWindow.RIValueZ = cmds.floatSliderGrp(MainWindow.RIUserZ_,q=True,v=True)")
     MainWindow.RIUserH_ = cmds.floatSliderGrp(l="Range for High", f=True, min=0, max=10, v=0,
-                                              cc="F_MenuWin.RIValueH=cmds.floatSliderGrp(F_MenuWin.RIUserH_,q=True,v=True)")
+                                              cc="MainWindow.RIValueH = cmds.floatSliderGrp(MainWindow.RIUserH_,q=True,v=True)")
     MainWindow.RIUserD_ = cmds.floatSliderGrp(l="Range for Depth", f=True, min=-10, max=0, v=0,
-                                              cc="F_MenuWin.RIValueD=cmds.floatSliderGrp(F_MenuWin.RIUserD_,q=True,v=True)")
+                                              cc="MainWindow.RIValueD = cmds.floatSliderGrp(MainWindow.RIUserD_,q=True,v=True)")
     cmds.separator(st='in', w=450, h=20)
 
     cmds.text("Please indicate the frequency of noise. higher the number, bigger the area", align="left")
     MainWindow.FreqUser=cmds.intSliderGrp(l="Frequency Indicator", f=True, min=1, max=500, v=20,
-                                          cc="F_MenuWin.FreqInd=cmds.intSliderGrp(F_MenuWin.FreqUser,q=True,v=True)")
+                                          cc="MainWindow.FreqInd=cmds.intSliderGrp(MainWindow.FreqUser,q=True,v=True)")
     cmds.separator(st='in',w=450,h=20)
 
     # --- Soft selection checkbox on/off plus slider for radius 
-    cmds.text("Click the checkbox to apply softselect and set the radius on the slider\n", align="left")
-    MainWindow.SSel=cmds.checkBox(l="SoftSelect", en=True, align="center", cc="F_MenuWin.SoftSelect=cmds.checkBox(F_MenuWin.SSel,q=True,value=True)")
-    MainWindow.SoftSelR_=cmds.intSliderGrp(l="Radius", f=True, min=0, max=100, v=20, cc="F_MenuWin.SoftSelR=float(cmds.intSliderGrp(F_MenuWin.SoftSelR_,q=True,v=True))")
+    cmds.text("Click the checkbox to apply soft select and set the radius on the slider\n", align="left")
+    MainWindow.SSel=cmds.checkBox(l="SoftSelect", en=True, align="center", cc="MainWindow.SoftSelect=cmds.checkBox(MainWindow.SSel,q=True,value=True)")
+    MainWindow.SoftSelR_=cmds.intSliderGrp(l="Radius", f=True, min=0, max=100, v=20, cc="MainWindow.SoftSelR=float(cmds.intSliderGrp(MainWindow.SoftSelR_,q=True,v=True))")
     cmds.separator(st='in', w=450, h=20)
 
     cmds.text("Choose based on what component you like to deform", align="left")
     cmds.radioCollection()
-    cmds.radioButton(l="Vertex", cc="F_MenuWin.CompType=0", sl=True)
-    cmds.radioButton(l="Edges", cc="F_MenuWin.CompType=1")
-    cmds.radioButton(l="Faces", cc="F_MenuWin.CompType=2")
-    cmds.radioButton(l="Selection", cc="F_MenuWin.CompType=4")
+    cmds.radioButton(l="Vertex", cc="MainWindow.CompType=0", sl=True)
+    cmds.radioButton(l="Edges", cc="MainWindow.CompType=1")
+    cmds.radioButton(l="Faces", cc="MainWindow.CompType=2")
+    cmds.radioButton(l="Selection", cc="MainWindow.CompType=4")
     cmds.separator(st='in', w=450, h=20)
 
     # here I give the option to the user choose the speed of the animation
     cmds.text(l="You can animate the construction of the terrain", align="left")
     cmds.text(l="Choose between 0 (fast) and 1(slow)", align="left")
     MainWindow.AnimTime_=cmds.floatSliderGrp(l="Time:", min=0, max=1, f=True, v=0,
-                                cc="F_MenuWin.AnimTime=cmds.floatSliderGrp(F_MenuWin.AnimTime_,q=True,v=True)")
+                                cc="MainWindow.AnimTime=cmds.floatSliderGrp(MainWindow.AnimTime_,q=True,v=True)")
     cmds.separator(st='in', w=450, h=20)
 
-    #cmds.button(l="TEST", c="print (F_MenuWin.SoftSelect,F_MenuWin.SoftSelR,F_MenuWin.AnimTime)")
+    #cmds.button(l="TEST", c="print (MainWindow.SoftSelect,MainWindow.SoftSelR,MainWindow.AnimTime)")
     cmds.button(l="Deform", c="F_DeformOBJ()")
     cmds.separator(st='in', w=450, h=20)
 
@@ -130,19 +132,19 @@ def MainWindow():
     # here we ask the amount of rock user needs
     cmds.text("\nProvide the amount of the rocks \n",align="left")
     MainWindow.RockAmount_ = cmds.intSliderGrp(l="Rock Copies", f=True, min=2, max=100, v=20,
-                                cc="F_MenuWin.RockAmount=cmds.intSliderGrp(F_MenuWin.RockAmount_,q=True,v=True)")
+                                cc="MainWindow.RockAmount=cmds.intSliderGrp(MainWindow.RockAmount_,q=True,v=True)")
     cmds.separator(st='in', w=450, h=20)
 
     # here we set slider to user choose the random range location x and Z
     cmds.text("\nPlease provide the range for random distribution of the rocks\n",align="left")
-    MainWindow.RockRIUserX_=cmds.floatSliderGrp(l="Range for X", en=True, f=True, min=0, max=500, v=30,
-                                cc="F_MenuWin.RockRIValueX=cmds.floatSliderGrp(F_MenuWin.RockRIUserX_,q=True,v=True)")
-    MainWindow.RockRIUserZ_=cmds.floatSliderGrp(l="Range for Z", en=True, f=True, min=0, max=500, v=30,
-                                cc="F_MenuWin.RockRIValueZ=cmds.floatSliderGrp(F_MenuWin.RockRIUserZ_,q=True,v=True)")
+    MainWindow.rock_range_x_ = cmds.floatSliderGrp(l="Range for X", en=True, f=True, min=0, max=500, v=30,
+                                                   cc="MainWindow.RockRIValueX=cmds.floatSliderGrp(MainWindow.rock_range_x_,q=True,v=True)")
+    MainWindow.rock_range_z_ = cmds.floatSliderGrp(l="Range for Z", en=True, f=True, min=0, max=500, v=30,
+                                                   cc="MainWindow.RockRIValueZ=cmds.floatSliderGrp(MainWindow.rock_range_z_,q=True,v=True)")
     cmds.separator(st='in', w=450, h=20)
     cmds.text("Maximum radius for the rock\n", align="left")
-    MainWindow.RockMaxR_=cmds.intSliderGrp(l="Radius", f=True, min=4, max=10, v=6,
-                                           cc="F_MenuWin.RockMaxR=cmds.intSliderGrp(F_MenuWin.RockMaxR_,q=True,v=True)")
+    MainWindow.RockMaxR_ = cmds.intSliderGrp(l="Radius", f=True, min=4, max=10, v=6,
+                                           cc="MainWindow.RockMaxR=cmds.intSliderGrp(MainWindow.RockMaxR_,q=True,v=True)")
     cmds.separator(st='in', w=450, h=20)
 
     # here provide a checkbox to the user confirm if want place the rocks on the selection
@@ -151,8 +153,8 @@ def MainWindow():
     cmds.separator(st='in', w=450, h=20)
 
     # here provide a checkbox to the user confirm if want place the rocks on the terrain
-    MainWindow.RockonTer=cmds.checkBox(l="Place Rocks on the terrain", en=True,
-                                    cc="F_MenuWin.RockonTerrain=cmds.checkBox(F_MenuWin.RockonTer,q=True,value=True)")
+    MainWindow.RockonTer = cmds.checkBox(l="Place Rocks on the terrain", en=True,
+                                    cc="MainWindow.RockonTerrain=cmds.checkBox(MainWindow.RockonTer,q=True,value=True)")
     cmds.text("if this checkbox is selected you spread the rocks in all terrain")
     cmds.separator(st='in', w=450, h=20)
 
@@ -170,7 +172,7 @@ def MainWindow():
 
     cmds.text("Click in the drop box and choose the Texture file of your choice\n")
     MainWindow.TextFileChoice_=cmds.optionMenu('optionMenu', l="File List",
-                                cc="F_MenuWin.TextFileChoice=cmds.optionMenu(F_MenuWin.TextFileChoice_,q=True,v=True)")
+                                cc="MainWindow.TextFileChoice=cmds.optionMenu(MainWindow.TextFileChoice_,q=True,v=True)")
     cmds.text("\nIf you want to choose another folder clear the list clicking in the button\n")
     cmds.button(l="Clear List", c="F_ClearDir()")
     cmds.separator(st='in', h=40)
@@ -213,7 +215,7 @@ def SmoothingWindow():
 def OceanSettingsWindow():
     # initiate variables with default values
     OceanSettingsWindow.Scale = 1000;          OceanSettingsWindow.Freq = 3000
-    OceanSettingsWindow.WaveLenghtMin = 0.3;   OceanSettingsWindow.WaveLenghtMax = 4000
+    OceanSettingsWindow.wave_length_min = 0.3;   OceanSettingsWindow.wave_length_max = 4000
 
     # condition to check if the window exist
     if cmds.window("Ocean Window", ex=True):
@@ -224,25 +226,25 @@ def OceanSettingsWindow():
     # here I created the sliders to user define values of dv,du,pw,ps,po
     cmds.text(l="Ocean Scale?")
     OceanSettingsWindow.Scale_ = cmds.floatSliderGrp(l="Value:", min=1, max=7000, f=True, v=1000,
-                                        cc="F_OceanWin.Scale=cmds.floatSliderGrp(F_OceanWin.Scale_,q=True,v=True)")
+                                    cc="F_OceanWin.Scale=cmds.floatSliderGrp(OceanSettingsWindow.Scale_,q=True,v=True)")
     cmds.separator(st='in', w=450, h=10)
 
     cmds.text(l="Ocean Frequency?")    
     OceanSettingsWindow.Freq_=cmds.floatSliderGrp(l="Value:", min=1, max=10000, f=True, v=3000,
-                                        cc="F_OceanWin.Freq=cmds.floatSliderGrp(F_OceanWin.Freq_,q=True,v=True)")
+                                cc="F_OceanWin.Freq=cmds.floatSliderGrp(OceanSettingsWindow.Freq_,q=True,v=True)")
     cmds.separator(st='in', w=450, h=10)
 
     cmds.text(l="Ocean Wave Length Minimum?")    
-    OceanSettingsWindow.WaveLenghtMin_=cmds.floatSliderGrp(l="Value:", min=1, max=10000, f=True, v=0.3,
-                            cc="F_OceanWin.WaveLenghtMin=cmds.floatSliderGrp(F_OceanWin.WaveLenghtMin_,q=True,v=True)")
+    OceanSettingsWindow.wave_Length_min_=cmds.floatSliderGrp(l="Value:", min=1, max=10000, f=True, v=0.3,
+            cc="F_OceanWin.wave_length_min = cmds.floatSliderGrp(OceanSettingsWindow.wave_Length_min_,q=True,v=True)")
     cmds.separator(st='in', w=450, h=10)
 
     cmds.text(l="Ocean Wave Length Maximum?")
-    OceanSettingsWindow.WaveLenghtMax_=cmds.floatSliderGrp(l="Value:", min=1, max=10000, f=True, v=4000,
-                            cc="F_OceanWin.WaveLenghtMax=cmds.floatSliderGrp(F_OceanWin.WaveLenghtMax_,q=True,v=True)")
+    OceanSettingsWindow.wave_length_max_=cmds.floatSliderGrp(l="Value:", min=1, max=10000, f=True, v=4000,
+            cc="F_OceanWin.wave_length_max = cmds.floatSliderGrp(OceanSettingsWindow.wave_length_max_,q=True,v=True)")
     cmds.separator(st='in', w=450, h=40)
 
-    cmds.button(l="Change", w=100, h=50, c="F_OceanSet()")
+    cmds.button(l="Change", w=100, h=50, c="OceanSetup()")
     cmds.showWindow(ocean_menu)
 
 # #######################################   FUNCTIONS   ####################################
@@ -257,9 +259,11 @@ def TerrainBuilder():
     opt_sw = cmds.intSliderGrp(MainWindow.TerrainSW, q=True, v=True)
     opt_sh = cmds.intSliderGrp(MainWindow.TerrainSH, q=True, v=True)
 
-    if cmds.objExists(MainWindow.terrain_name):                           #check if the terrain exist and tells user to delete first before create another one
+    # check if the terrain exist and tells user to delete first before create another one
+    if cmds.objExists(MainWindow.terrain_name):
         cmds.warning ("You need to delete the previews Terrain to build another one")
-    else:                                                               #create the terrain acording with values the user choose
+    # create the terrain according with values the user choose
+    else:
         TerrainBuilder.Obj = cmds.polyPlane(n=MainWindow.terrain_name, w=opt_width, h=opt_height, sw=opt_sw, sh=opt_sh)
         cmds.displaySmoothness(du=3, dv=3, pw=16, ps=4, po=3)
     cmds.select(clear=True)
@@ -333,7 +337,7 @@ def DeformTerrain():
     # creating condition to check if the terrain exist
     if cmds.objExists(MainWindow.TerrainName):
         current_frame = 1
-        # here we identify the component type based on F_MenuWin.CompType value
+        # here we identify the component type based on MainWindow.CompType value
         if MainWindow.CompType==0:
             cmds.ConvertSelectionToVertices()
             AllComp=cmds.ls(sl=True,fl=True)
