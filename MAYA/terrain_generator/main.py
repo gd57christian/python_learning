@@ -180,7 +180,7 @@ def MainWindow():
 
     cmds.text("Click in the drop box and choose the Texture file of your choice\n")
     MainWindow.text_file_choice_ = cmds.optionMenu('optionMenu', l="File List",
-                        cc="MainWindow.TextFileChoice=cmds.optionMenu(MainWindow.text_file_choice_,q=True,v=True)")
+                    cc="MainWindow.text_file_choice=cmds.optionMenu(MainWindow.text_file_choice_,q=True,v=True)")
 
     cmds.text("\nIf you want to choose another folder clear the list clicking in the button\n")
     cmds.button(l="Clear List", c="ClearDirectory()")
@@ -560,7 +560,9 @@ def RockGenerator():
     cmds.textScrollList(MainWindow.RockGroups, e=True, append=NEW_ROCK_GROUP_LIST)
 
 
-def CheckBoxWin():                                                    #here I create a function to change state of the checkbox
+
+#here I create a function to change state of the checkbox
+def CheckBoxWin():
     MainWindow.rock_on_selection=cmds.checkBox(MainWindow.RockonSel_, q=True, value=True)
     if MainWindow.rock_on_selection:                                       #when user choose to move rock to selection the other checkbox is disabled
         cmds.checkBox(MainWindow.RockonTer, e=True, en=False, v=False)
@@ -570,8 +572,8 @@ def CheckBoxWin():                                                    #here I cr
 
 def SelectDirectory():                                                         #this function I create to user select the folder and list the files in a dropbox to the user
         basic_filter = "Image Files (*.jpg *.jpeg *.tga *.png *.tiff *.bmp *.psd)"
-        SelectDirectory.myDir = cmds.fileDialog2 (fileFilter=basic_filter, dialogStyle=2, fm=3)
-        SelectDirectory.Files= listdir(SelectDirectory.myDir[0])
+        SelectDirectory.my_dir = cmds.fileDialog2 (fileFilter=basic_filter, dialogStyle=2, fm=3)
+        SelectDirectory.Files= listdir(SelectDirectory.my_dir[0])
         for items in SelectDirectory.Files:
             file_endings = ('.jpg','JPG','.jpeg','.JPEG','.tga','.TGA','.png','.PNG','.tiff','.TIFF','.bmp','.BMP')
             if items.endswith(file_endings):
@@ -588,7 +590,7 @@ def ClearDirectory():                                                       #thi
 
 def ShaderToGroup():                                                    #apply texture to the group of rocks
     MainWindow.RockGrpSel = cmds.textScrollList(MainWindow.RockGroups, q=True, si=True) #fetch the group of rocks the user choose
-    texture_name = MainWindow.TextFileChoice[:-4]
+    texture_name = MainWindow.text_file_choice[:-4]
     #listing and saving existing materials to a variable
     mat_list = sorted(set(cmds.ls([mat for item in cmds.ls(type='shadingEngine') for mat in cmds.listConnections(item) if cmds.sets(item, q=True)], materials=True)))
 
@@ -608,12 +610,12 @@ def ShaderToGroup():                                                    #apply t
         # start to create the shader and connect.
         selected_menu_item = cmds.optionMenu('optionMenu', q=True, value=True)
         file_r_node = cmds.shadingNode('file', name=texture_name, asTexture=True)
-        cmds.setAttr(texture_name +'.fileTextureName', SelectDirectory.myDir[0] + '/' + selected_menu_item, type="string")
+        cmds.setAttr(texture_name +'.fileTextureName', SelectDirectory.my_dir[0] + '/' + selected_menu_item, type="string")
         cmds.sets(name=texture_name+'RockMaterialGroup', renderable=True, empty=True)
         # create shader
         ShaderNode = cmds.shadingNode('blinn', name=texture_name+'ShaderNode', asShader=True)
         file_r_node = cmds.shadingNode('file', name=texture_name, asTexture=True)
-        cmds.setAttr(texture_name +'.fileTextureName', SelectDirectory.myDir[0] + '/' + selected_menu_item, type="string")
+        cmds.setAttr(texture_name +'.fileTextureName', SelectDirectory.my_dir[0] + '/' + selected_menu_item, type="string")
         cmds.connectAttr(texture_name+'.outColor',texture_name+'ShaderNode'+'.color')
         my2_dr_placer=cmds.shadingNode("place2dTexture", n="MyTxtPlacer", asUtility=True)
         cmds.connectAttr(my2_dr_placer+".outUV",texture_name+".uvCoord", f=True)
@@ -654,7 +656,7 @@ def ShaderToGroup():                                                    #apply t
                         normal_node = cmds.shadingNode("file", name="NormalMap", asTexture=True)
                         bump_normal = cmds.shadingNode("bump2d", asUtility=True)
                         cmds.setAttr(normal_node +".fileTextureName",
-                                     SelectDirectory.myDir[0] + '/' + normal_map_file[0], type="string")
+                                     SelectDirectory.my_dir[0] + '/' + normal_map_file[0], type="string")
                         cmds.connectAttr(normal_node +".outAlpha", bump_normal + ".bumpValue", f=True)
                         cmds.connectAttr(bump_normal + ".outNormal", ShaderNode + ".normalCamera")
                         cmds.connectAttr(my2_dr_placer+".outUV", normal_node+".uvCoord")
@@ -672,7 +674,7 @@ def ShaderToGroup():                                                    #apply t
                     if rough_map_exist:
                         rough_node=cmds.shadingNode("file", name="NormalMap", asTexture=True)
                         cmds.setAttr(rough_node +".fileTextureName",
-                                     SelectDirectory.myDir[0] + '/' + rough_map_file[0], type="string")
+                                     SelectDirectory.my_dir[0] + '/' + rough_map_file[0], type="string")
                         cmds.connectAttr(rough_node+".outColor", ShaderNode+".ambientColor", f=True)
                         cmds.connectAttr(my2_dr_placer+".outUV", rough_node+".uvCoord")
                         del files_list_rough
@@ -688,7 +690,7 @@ def ShaderToGroup():                                                    #apply t
                     if disp_map_exist:
                         DispNode=cmds.shadingNode("file",name="NormalMap",asTexture=True)
                         cmds.setAttr(DispNode +".fileTextureName",
-                                     SelectDirectory.myDir[0] + '/' + disp_map_file[0], type="string")
+                                     SelectDirectory.my_dir[0] + '/' + disp_map_file[0], type="string")
                         cmds.connectAttr(DispNode+".outColor", ShaderNode+".ambientColor", f=True)
                         cmds.connectAttr(my2_dr_placer+".outUV", DispNode+".uvCoord")
                         # deleting variables
@@ -698,7 +700,7 @@ def ShaderToGroup():                                                    #apply t
 
 # here I have a function to select the texture from the files in a selected folder, create and applying a shader
 def Shading():
-    Shading.texture_name= MainWindow.TextFileChoice[:-4]
+    Shading.texture_name= MainWindow.text_file_choice[:-4]
     # listing and saving existing materials to a variable
     mat_list = sorted(set(cmds.ls([mat for item in cmds.ls(type='shadingEngine') for mat in cmds.listConnections(item) if cmds.sets(item, q=True)], materials=True)))
     object = cmds.ls(sl=True)
@@ -706,19 +708,19 @@ def Shading():
     if (Shading.texture_name + "ShaderNode") in mat_list:
         for ll in range(0,len(ListObj)):
                 cmds.select(ListObj[ll])
-                Object=cmds.ls(sl=True)
-                cmds.sets(Object, e=True, forceElement='imageMaterialGroup')
+                object = cmds.ls(sl=True)
+                cmds.sets(object, e=True, forceElement='imageMaterialGroup')
     else:
         # add the selected file to a variable
         selected_menu_item = cmds.optionMenu('optionMenu', q=True, value=True)
         file_node = cmds.shadingNode('file', name=Shading.texture_name, asTexture=True)
-        cmds.setAttr(Shading.texture_name + '.fileTextureName', SelectDirectory.myDir[0] + '/' + selected_menu_item,
+        cmds.setAttr(Shading.texture_name + '.fileTextureName', SelectDirectory.my_dir[0] + '/' + selected_menu_item,
                      type="string")
         cmds.sets(name='imageMaterialGroup', renderable=True, empty=True)
         Shading.ShaderNode = cmds.shadingNode('blinn', name=Shading.texture_name + 'ShaderNode', asShader=True)
 
         file_node = cmds.shadingNode('file', name=Shading.texture_name, asTexture=True)
-        cmds.setAttr(Shading.texture_name + '.fileTextureName', SelectDirectory.myDir[0] + '/' + selected_menu_item,
+        cmds.setAttr(Shading.texture_name + '.fileTextureName', SelectDirectory.my_dir[0] + '/' + selected_menu_item,
                      type="string")
         cmds.connectAttr(Shading.texture_name + '.outColor', Shading.texture_name + 'ShaderNode' + '.color')
         Shading.my_2D_placer=cmds.shadingNode("place2dTexture", n="MyTxtPlacer", asUtility=True)
@@ -759,7 +761,7 @@ def ShadingMaps():
                         normal_node = cmds.shadingNode("file",name="NormalMap",asTexture=True)
                         bump_normal = cmds.shadingNode("bump2d",asUtility=True)
                         cmds.setAttr(normal_node +".fileTextureName",
-                                     SelectDirectory.myDir[0] + '/' + normal_map_file[0], type="string")
+                                     SelectDirectory.my_dir[0] + '/' + normal_map_file[0], type="string")
                         cmds.connectAttr(normal_node+".outAlpha",bump_normal+".bumpValue",f=True)
                         cmds.connectAttr(bump_normal +".outNormal", Shading.ShaderNode + ".normalCamera")
                         cmds.connectAttr(Shading.My2Dplacer + ".outUV", normal_node + ".uvCoord")
@@ -778,7 +780,7 @@ def ShadingMaps():
                     if rough_map_exist:
                         rough_node = cmds.shadingNode("file",name="NormalMap",asTexture=True)
                         cmds.setAttr(rough_node +".fileTextureName",
-                                     SelectDirectory.myDir[0] + '/' + rough_map_file[0], type="string")
+                                     SelectDirectory.my_dir[0] + '/' + rough_map_file[0], type="string")
                         cmds.connectAttr(rough_node +".outColor", Shading.ShaderNode + ".ambientColor", f=True)
                         cmds.connectAttr(Shading.My2Dplacer + ".outUV", rough_node + ".uvCoord")
                         del files_list_rough
@@ -795,7 +797,7 @@ def ShadingMaps():
                     if disp_map_exist:
                         disp_node = cmds.shadingNode("file",name="NormalMap",asTexture=True)
                         cmds.setAttr(disp_node +".fileTextureName",
-                                     SelectDirectory.myDir[0] + '/' + disp_map_file[0], type="string")
+                                     SelectDirectory.my_dir[0] + '/' + disp_map_file[0], type="string")
                         cmds.connectAttr(disp_node +".outColor", Shading.ShaderNode + ".ambientColor", f=True)
                         cmds.connectAttr(Shading.My2Dplacer + ".outUV", disp_node + ".uvCoord")
                         del files_list_disp
