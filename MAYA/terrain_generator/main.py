@@ -388,8 +388,8 @@ def DeformTerrain():
 def RockGenerator():
     current_frame=1
 
-    RnX = MainWindow.RockRIUserX
-    RnZ = MainWindow.RockRIUserZ
+    rn_x = MainWindow.RockRIUserX
+    rn_z = MainWindow.RockRIUserZ
     rock_num = int(MainWindow.rock_amount) + 1
     # fetch the name of the rock
     rock_name = cmds.textField(MainWindow.rock_name, q=True, tx=True)
@@ -500,9 +500,9 @@ def RockGenerator():
         else:
             for i in range (1, rock_num):
                 # def. random num to move the rock to a random location X
-                ran_loc_x = rand(-RnX,RnX)
+                ran_loc_x = rand(-rn_x,rn_x)
                 # def. random num to move the rock to a random location Z
-                ran_loc_z = rand(-RnZ,RnZ)
+                ran_loc_z = rand(-rn_z,rn_z)
                 # getting a random radius number from 1 to user limit input
                 rand_rad = rand(4, MainWindow.RockMaxR)
                 # calculating a number in relation to the random radius
@@ -583,9 +583,9 @@ def SelectDirectory():                                                         #
 
 
 def ClearDirectory():                                                       #this function is to clear the dropbox with the list of files
-    fileList = cmds.optionMenu('optionMenu', q=True, itemListLong=True)
-    if fileList:
-        cmds.deleteUI(fileList)
+    file_list = cmds.optionMenu('optionMenu', q=True, itemListLong=True)
+    if file_list:
+        cmds.deleteUI(file_list)
 
 
 def ShaderToGroup():                                                    #apply texture to the group of rocks
@@ -645,8 +645,8 @@ def ShaderToGroup():                                                    #apply t
         # end if finish with map I'm looking for (*Normal.jpg, *Roughness.jpg,etc), after the second check if file founded is stored in a variable, also created a bool     #
         # to use to install the map or not         <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<#
         for files_list_normal in files_list_normal:
-            result = files_list_normal.startswith(search_name)
-            if result:
+            result_list = files_list_normal.startswith(search_name)
+            if result_list:
                 result2 = files_list_normal.endswith("Normal.jpg")
                 if result2:
                     normal_map_exist = True
@@ -664,8 +664,8 @@ def ShaderToGroup():                                                    #apply t
                         del files_list_normal                                                                         #deleting variables
                         del normal_map_exist
         for files_list_rough in files_list_rough:
-            result = files_list_rough.startswith(search_name)
-            if result:
+            result_list = files_list_rough.startswith(search_name)
+            if result_list:
                 result2 = files_list_rough.endswith("Roughness.jpg")
                 if result2:
                     rough_map_exist=True
@@ -680,8 +680,8 @@ def ShaderToGroup():                                                    #apply t
                         del files_list_rough
                         del rough_map_exist
         for files_list_disp in files_list_disp:
-            result = files_list_disp.startswith(search_name)
-            if result:
+            result_list = files_list_disp.startswith(search_name)
+            if result_list:
                 result2 = files_list_disp.endswith("Displacement.jpg")
                 if result2:
                     disp_map_exist=True
@@ -744,10 +744,13 @@ def ShadingMaps():
         # here I set a variable to save the five first letters from the file
         search_name = (ref_name[0]+ref_name[1]+ref_name[2]+ref_name[3]+ref_name[4])
 
-        # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>#
-        # Here I have a sequence of FOR loop where I check in the directory/folder, files that has the same start string from the texture file first, then I check for the  #
-        # end if finish with map I'm looking for (*Normal.jpg, *Roughness.jpg,etc), after the second check if file founded is stored in a variable, also created a bool     #
-        # to use to install the map or not         <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<#
+        # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        # Here I have a sequence of FOR loop where I check in the directory/folder, files that has the same start string
+        # from the texture file first, then I check for the  #
+        # end if finish with map I'm looking for (*Normal.jpg, *Roughness.jpg,etc), after the second check if file
+        # founded is stored in a variable, also created a bool     #
+        # to use to install the map or not
+        # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
         for files_list_normal in files_list_normal:
             result_files = files_list_normal.startswith(search_name)
