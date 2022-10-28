@@ -1,4 +1,4 @@
-##################################    LIBRARIES  #################################
+# #################################    LIBRARIES  #################################
 import maya.cmds as cmds
 from random import uniform as rand
 import time
@@ -7,7 +7,8 @@ import re
 
 # create a variable to store the group of rocks
 LIST_OF_ROCK_GROUPS = cmds.ls(sl=False)
-NEW_ROCK_GROUP_LIST=[]
+NEW_ROCK_GROUP_LIST = []
+
 
 # todo review and fix the code & name convention
 # todo move functions to modules
@@ -18,16 +19,26 @@ NEW_ROCK_GROUP_LIST=[]
 
 def MainWindow():
     # providing initial defaults values for variables
-    MainWindow.terrain_width = int(500);         MainWindow.terrain_height = int(500)
-    MainWindow.range_value_x = 0.0;              MainWindow.range_value_z = 0.0
-    MainWindow.range_value_height = 0.0;         MainWindow.range_value_depth = 0.0
-    MainWindow.frequency_ind = 20;               MainWindow.comp_type = 0
-    MainWindow.soft_select = False;              MainWindow.soft_select_radius = 20
-    MainWindow.animation_time = 0.0;             MainWindow.rock_amount = 20
-    MainWindow.rock_range_x = 30.0;              MainWindow.rock_range_z = 30.0
-    MainWindow.rock_place_on_terrain = False;    MainWindow.rock_max_radius = 6
-    MainWindow.terrain_name = "Terrain";         MainWindow.rock_place_on_selection = False
-    MainWindow.ocean_button = False;             MainWindow.text_file_choice = ""
+    MainWindow.terrain_width = int(500)
+    MainWindow.terrain_height = int(500)
+    MainWindow.range_value_x = 0.0
+    MainWindow.range_value_z = 0.0
+    MainWindow.range_value_height = 0.0
+    MainWindow.range_value_depth = 0.0
+    MainWindow.frequency_ind = 20
+    MainWindow.comp_type = 0
+    MainWindow.soft_select = False
+    MainWindow.soft_select_radius = 20
+    MainWindow.animation_time = 0.0
+    MainWindow.rock_amount = 20
+    MainWindow.rock_range_x = 30.0
+    MainWindow.rock_range_z = 30.0
+    MainWindow.rock_place_on_terrain = False
+    MainWindow.rock_max_radius = 6
+    MainWindow.terrain_name = "Terrain"
+    MainWindow.rock_place_on_selection = False
+    MainWindow.ocean_button = False
+    MainWindow.text_file_choice = ""
     MainWindow.rock_grp_selection = []
 
     # Checking if the window already exist and delete to open a new one.
@@ -37,21 +48,24 @@ def MainWindow():
 
     form = cmds.formLayout()
     tabs = cmds.tabLayout(innerMarginWidth=50, innerMarginHeight=50)
-    cmds.formLayout( form, edit=True, attachForm=((tabs, 'top', 10), (tabs, 'left', 10),
-                                                  (tabs, 'bottom', 10), (tabs, 'right', 10)) )
+    cmds.formLayout(form, edit=True, attachForm=((tabs, 'top', 10), (tabs, 'left', 10),
+                                                 (tabs, 'bottom', 10), (tabs, 'right', 10)))
 
     # ----------------------------------- TAB-CHILD 1 ---------------------
     tab_child1 = cmds.rowColumnLayout(adj=True, numberOfColumns=1)
-    cmds.text("\nProvide name for the Terrain that will be generated\n",align="left")
+    cmds.text("\nProvide name for the Terrain that will be generated\n", align="left")
     MainWindow.terrain_name_ = cmds.textField(tx="Terrain",
-                        cc="MainWindow.terrain_name = cmds.textField(MainWindow.terrain_name_, q=True, tx=True)")
+                                              cc="MainWindow.terrain_name = cmds.textField(MainWindow.terrain_name_, "
+                                                 "q=True, tx=True)")
     cmds.separator(st='in', w=450, h=25)
     cmds.text(l="What is the width of the terrain?", align="left")
     MainWindow.terrain_width_ = cmds.intSliderGrp(l="Min:", min=100, max=1000, f=True, v=500,
-                            cc="MainWindow.TerrainWidth=cmds.intSliderGrp(MainWindow.terrain_width_,q=True, v=True)")
-    cmds.text(l="What is the height of the terrain?",align="left")    
+                                                  cc="MainWindow.TerrainWidth=cmds.intSliderGrp("
+                                                     "MainWindow.terrain_width_,q=True, v=True)")
+    cmds.text(l="What is the height of the terrain?", align="left")
     MainWindow.terrain_height_ = cmds.intSliderGrp(l="Min:", min=100, max=1000, f=True, v=500,
-                            cc="MainWindow.TerrainHeight=cmds.intSliderGrp(MainWindow.terrain_height_,q=True, v=True)")
+                                                   cc="MainWindow.TerrainHeight=cmds.intSliderGrp("
+                                                      "MainWindow.terrain_height_,q=True, v=True)")
     cmds.separator(st='in', w=450, h=20)
 
     # here I created the sliders to user define number of subdivisions width and height
@@ -70,39 +84,45 @@ def MainWindow():
     cmds.separator(st='in', w=450, h=15)
 
     # here a button is created to build the ocean under terrain
-    cmds.text("\nYou can create an Ocean under the Terrain\n", align="left" )
+    cmds.text("\nYou can create an Ocean under the Terrain\n", align="left")
     cmds.button(l="Ocean", en=True, c="F_Ocean()")
     cmds.separator(st='in', w=450, h=10)
     cmds.button(l="Move Ocean UP", en=True, c="MoveOceanUP()")
     cmds.button(l="Move Ocean DOWN", en=True, c="MoveOceanDOWN()")
     cmds.separator(st='in', w=450, h=10)
     cmds.button(l="Ocean Advanced Options", en=True, c="OceanSettingsWindow()")
-    cmds.setParent( '..' )
+    cmds.setParent('..')
 
     # ---------------------------------------- TAB-CHILD 2 ---------------------
-    tab_child2 = cmds.rowColumnLayout(adj= True,numberOfColumns=1)
+    tab_child2 = cmds.rowColumnLayout(adj=True, numberOfColumns=1)
     cmds.text("\nPlease provide the range you desire", align="left")
     MainWindow.rock_range_x_ = cmds.floatSliderGrp(l="Range for X", f=True, min=0, max=10, v=0,
-                            cc="MainWindow.rock_range_x = cmds.floatSliderGrp(MainWindow.rock_range_x_,q=True,v=True)")
+                                                   cc="MainWindow.rock_range_x = cmds.floatSliderGrp("
+                                                      "MainWindow.rock_range_x_,q=True,v=True)")
     MainWindow.rock_range_z_ = cmds.floatSliderGrp(l="Range for Z", f=True, min=0, max=10, v=0,
-                            cc="MainWindow.rock_range_z = cmds.floatSliderGrp(MainWindow.rock_range_z_,q=True,v=True)")
+                                                   cc="MainWindow.rock_range_z = cmds.floatSliderGrp("
+                                                      "MainWindow.rock_range_z_,q=True,v=True)")
     MainWindow.rock_range_height_ = cmds.floatSliderGrp(l="Range for High", f=True, min=0, max=10, v=0,
-                            cc="MainWindow.rock_value_height = cmds.floatSliderGrp(MainWindow.rock_range_height_,q=True,v=True)")
+                                                        cc="MainWindow.rock_value_height = cmds.floatSliderGrp("
+                                                           "MainWindow.rock_range_height_,q=True,v=True)")
     MainWindow.rock_range_depth_ = cmds.floatSliderGrp(l="Range for Depth", f=True, min=-10, max=0, v=0,
-                            cc="MainWindow.rock_range_depth = cmds.floatSliderGrp(MainWindow.rock_range_depth_,q=True,v=True)")
+                                                       cc="MainWindow.rock_range_depth = cmds.floatSliderGrp("
+                                                          "MainWindow.rock_range_depth_,q=True,v=True)")
     cmds.separator(st='in', w=450, h=20)
 
     cmds.text("Please indicate the frequency of noise. higher the number, bigger the area", align="left")
-    MainWindow.FreqUser=cmds.intSliderGrp(l="Frequency Indicator", f=True, min=1, max=500, v=20,
-                                    cc="MainWindow.FreqInd=cmds.intSliderGrp(MainWindow.FreqUser,q=True,v=True)")
-    cmds.separator(st='in',w=450,h=20)
+    MainWindow.FreqUser = cmds.intSliderGrp(l="Frequency Indicator", f=True, min=1, max=500, v=20,
+                                            cc="MainWindow.FreqInd=cmds.intSliderGrp("
+                                               "MainWindow.FreqUser,q=True,v=True)")
+    cmds.separator(st='in', w=450, h=20)
 
     # --- Soft selection checkbox on/off plus slider for radius 
     cmds.text("Click the checkbox to apply soft select and set the radius on the slider\n", align="left")
-    MainWindow.SSel=cmds.checkBox(l="SoftSelect", en=True, align="center",
-                                cc="MainWindow.SoftSelect=cmds.checkBox(MainWindow.SSel,q=True,value=True)")
-    MainWindow.SoftSelR_=cmds.intSliderGrp(l="Radius", f=True, min=0, max=100, v=20,
-                                cc="MainWindow.SoftSelR=float(cmds.intSliderGrp(MainWindow.SoftSelR_,q=True,v=True))")
+    MainWindow.SSel = cmds.checkBox(l="SoftSelect", en=True, align="center",
+                                    cc="MainWindow.SoftSelect=cmds.checkBox(MainWindow.SSel,q=True,value=True)")
+    MainWindow.SoftSelR_ = cmds.intSliderGrp(l="Radius", f=True, min=0, max=100, v=20,
+                                             cc="MainWindow.SoftSelR=float(cmds.intSliderGrp(MainWindow.SoftSelR_,"
+                                                "q=True,v=True))")
     cmds.separator(st='in', w=450, h=20)
 
     cmds.text("Choose based on what component you like to deform", align="left")
@@ -116,11 +136,12 @@ def MainWindow():
     # here I give the option to the user choose the speed of the animation
     cmds.text(l="You can animate the construction of the terrain", align="left")
     cmds.text(l="Choose between 0 (fast) and 1(slow)", align="left")
-    MainWindow.AnimTime_=cmds.floatSliderGrp(l="Time:", min=0, max=1, f=True, v=0,
-                                cc="MainWindow.AnimTime=cmds.floatSliderGrp(MainWindow.AnimTime_,q=True,v=True)")
+    MainWindow.AnimTime_ = cmds.floatSliderGrp(l="Time:", min=0, max=1, f=True, v=0,
+                                               cc="MainWindow.AnimTime=cmds.floatSliderGrp(MainWindow.AnimTime_,"
+                                                  "q=True,v=True)")
     cmds.separator(st='in', w=450, h=20)
 
-    #cmds.button(l="TEST", c="print (MainWindow.SoftSelect,MainWindow.SoftSelR,MainWindow.AnimTime)")
+    # cmds.button(l="TEST", c="print (MainWindow.SoftSelect,MainWindow.SoftSelR,MainWindow.AnimTime)")
     cmds.button(l="Deform", c="DeformTerrain()")
     cmds.separator(st='in', w=450, h=20)
 
@@ -137,21 +158,25 @@ def MainWindow():
     cmds.separator(st='in', w=450, h=20)
 
     # here we ask the amount of rock user needs
-    cmds.text("\nProvide the amount of the rocks \n",align="left")
+    cmds.text("\nProvide the amount of the rocks \n", align="left")
     MainWindow.RockAmount_ = cmds.intSliderGrp(l="Rock Copies", f=True, min=2, max=100, v=20,
-                                cc="MainWindow.RockAmount=cmds.intSliderGrp(MainWindow.RockAmount_,q=True,v=True)")
+                                               cc="MainWindow.RockAmount=cmds.intSliderGrp(MainWindow.RockAmount_,"
+                                                  "q=True,v=True)")
     cmds.separator(st='in', w=450, h=20)
 
     # here we set slider to user choose the random range location x and Z
-    cmds.text("\nPlease provide the range for random distribution of the rocks\n",align="left")
+    cmds.text("\nPlease provide the range for random distribution of the rocks\n", align="left")
     MainWindow.rock_range_x_ = cmds.floatSliderGrp(l="Range for X", en=True, f=True, min=0, max=500, v=30,
-                            cc="MainWindow.RockRIValueX=cmds.floatSliderGrp(MainWindow.rock_range_x_,q=True,v=True)")
+                                                   cc="MainWindow.RockRIValueX=cmds.floatSliderGrp("
+                                                      "MainWindow.rock_range_x_,q=True,v=True)")
     MainWindow.rock_range_z_ = cmds.floatSliderGrp(l="Range for Z", en=True, f=True, min=0, max=500, v=30,
-                            cc="MainWindow.RockRIValueZ=cmds.floatSliderGrp(MainWindow.rock_range_z_,q=True,v=True)")
+                                                   cc="MainWindow.RockRIValueZ=cmds.floatSliderGrp("
+                                                      "MainWindow.rock_range_z_,q=True,v=True)")
     cmds.separator(st='in', w=450, h=20)
     cmds.text("Maximum radius for the rock\n", align="left")
     MainWindow.RockMaxR_ = cmds.intSliderGrp(l="Radius", f=True, min=4, max=10, v=6,
-                                      cc="MainWindow.RockMaxR=cmds.intSliderGrp(MainWindow.RockMaxR_,q=True,v=True)")
+                                             cc="MainWindow.RockMaxR=cmds.intSliderGrp(MainWindow.RockMaxR_,q=True,"
+                                                "v=True)")
     cmds.separator(st='in', w=450, h=20)
 
     # here provide a checkbox to the user confirm if you want place the rocks on the selection
@@ -162,7 +187,8 @@ def MainWindow():
 
     # here provide a checkbox to the user confirm if you want place the rocks on the terrain
     MainWindow.rock_on_terrain_checkbox = cmds.checkBox(l="Place Rocks on the terrain", en=True,
-        cc="MainWindow.rock_place_on_terrain = cmds.checkBox(MainWindow.rock_on_terrain_checkbox,q=True,value=True)")
+                                                        cc="MainWindow.rock_place_on_terrain = cmds.checkBox("
+                                                           "MainWindow.rock_on_terrain_checkbox,q=True,value=True)")
     cmds.text("if this checkbox is selected you spread the rocks in all terrain")
     cmds.separator(st='in', w=450, h=20)
 
@@ -170,17 +196,18 @@ def MainWindow():
     cmds.button(l="GENERATE", c="RockGenerator()")
     cmds.separator(st='in', w=450, h=40)
     cmds.button(l="UNDO", c="cmds.undo()")
-    cmds.setParent( '..' )
+    cmds.setParent('..')
 
-    #-------------------------------- TAB-CHILD 4 ---------------------
-    tab_child4 = cmds.rowColumnLayout(adj=True,numberOfColumns=1)
+    # -------------------------------- TAB-CHILD 4 ---------------------
+    tab_child4 = cmds.rowColumnLayout(adj=True, numberOfColumns=1)
     cmds.text("\nSelect the folder where where you have your Textures files\n")
     cmds.button(l="Select Directory", w=450, rs=True, c="cmds.select(clear=True);SelectDirectory()")
     cmds.separator(st='in', h=40)
 
     cmds.text("Click in the drop box and choose the Texture file of your choice\n")
     MainWindow.text_file_choice_ = cmds.optionMenu('optionMenu', l="File List",
-                    cc="MainWindow.text_file_choice=cmds.optionMenu(MainWindow.text_file_choice_,q=True,v=True)")
+                                                   cc="MainWindow.text_file_choice=cmds.optionMenu("
+                                                      "MainWindow.text_file_choice_,q=True,v=True)")
 
     cmds.text("\nIf you want to choose another folder clear the list clicking in the button\n")
     cmds.button(l="Clear List", c="ClearDirectory()")
@@ -192,15 +219,17 @@ def MainWindow():
 
     cmds.text('Select Folder, then Texture on the dropbox,choose the group in the)')
     cmds.text('box below you want to apply the Texture and click on the button\n APPLY TEXTURE TO A GROUP OF ROCKS')
-    MainWindow.RockGroups=cmds.textScrollList(nr=10, ams=False, append=NEW_ROCK_GROUP_LIST, shi=4, ai=True)
+    MainWindow.RockGroups = cmds.textScrollList(nr=10, ams=False, append=NEW_ROCK_GROUP_LIST, shi=4, ai=True)
     cmds.separator(st='in', h=20)
 
     cmds.button(l="Apply Texture to a GROUP of ROCKS", c="ShadertoGroup()")
-    cmds.setParent( '..' )
+    cmds.setParent('..')
 
-    cmds.tabLayout( tabs, edit=True, tabLabel=((tab_child1, 'Terrain Generator'),(tab_child2, 'Deform Terrain'),
-    (tab_child3,"Rock Generator"),(tab_child4,"Terrain Texture")))        #setting the tabs names
+    cmds.tabLayout(tabs, edit=True, tabLabel=((tab_child1, 'Terrain Generator'), (tab_child2, 'Deform Terrain'),
+                                              (tab_child3, "Rock Generator"),
+                                              (tab_child4, "Terrain Texture")))  # setting the tabs names
     cmds.showWindow()
+
 
 # Windows Function to the user set values to smooth the object
 def SmoothingWindow():
@@ -208,20 +237,20 @@ def SmoothingWindow():
     if cmds.window("Terrain Smoother", ex=True):
         cmds.deleteUI("Terrain Smoother")
 
-    smoothing_menu = cmds.window("Terrain Smoother",s=True,rtf=True,wh=(300,300))
+    smoothing_menu = cmds.window("Terrain Smoother", s=True, rtf=True, wh=(300, 300))
     cmds.columnLayout()
 
-    #here I created the sliders to user define values of dv,du,pw,ps,po
+    # here I created the sliders to user define values of dv,du,pw,ps,po
     cmds.text(l="Divisions U?")
-    SmoothingWindow.du=cmds.intSliderGrp(l="Value:", min=0, max=3, f=True, v=0)
+    SmoothingWindow.du = cmds.intSliderGrp(l="Value:", min=0, max=3, f=True, v=0)
     cmds.text(l="Divisions V?")
-    SmoothingWindow.dv=cmds.intSliderGrp(l="Value:", min=0, max=3, f=True, v=0)
+    SmoothingWindow.dv = cmds.intSliderGrp(l="Value:", min=0, max=3, f=True, v=0)
     cmds.text(l="Points Wire?")
-    SmoothingWindow.pw=cmds.intSliderGrp(l="Value:", min=4, max=16, f=True, v=4)
+    SmoothingWindow.pw = cmds.intSliderGrp(l="Value:", min=4, max=16, f=True, v=4)
     cmds.text(l="Points Shaded?")
-    SmoothingWindow.ps=cmds.intSliderGrp(l="Value:", min=1, max=4, f=True, v=1)
+    SmoothingWindow.ps = cmds.intSliderGrp(l="Value:", min=1, max=4, f=True, v=1)
     cmds.text(l="Polygon Object?")
-    SmoothingWindow.po=cmds.intSliderGrp(l="Value:", min=1, max=3, f=True, v=1)
+    SmoothingWindow.po = cmds.intSliderGrp(l="Value:", min=1, max=3, f=True, v=1)
     cmds.button(l="Change", w=100, h=50, c="Smoothing()")
     cmds.showWindow(smoothing_menu)
 
@@ -229,38 +258,47 @@ def SmoothingWindow():
 # Windows Function to set attributes for the ocean
 def OceanSettingsWindow():
     # initiate variables with default values
-    OceanSettingsWindow.scale = 1000;          OceanSettingsWindow.frequency = 3000
-    OceanSettingsWindow.wave_length_min = 0.3;   OceanSettingsWindow.wave_length_max = 4000
+    OceanSettingsWindow.scale = 1000
+    OceanSettingsWindow.frequency = 3000
+    OceanSettingsWindow.wave_length_min = 0.3
+    OceanSettingsWindow.wave_length_max = 4000
 
     # condition to check if the window exist
     if cmds.window("Ocean Window", ex=True):
         cmds.deleteUI("Ocean Window")
-    ocean_menu = cmds.window("Ocean Window",s=True,rtf=True,wh=(300,300))
+    ocean_menu = cmds.window("Ocean Window", s=True, rtf=True, wh=(300, 300))
     cmds.columnLayout()
 
     # here I created the sliders to user define values of dv,du,pw,ps,po
     cmds.text(l="Ocean Scale?")
     OceanSettingsWindow.Scale_ = cmds.floatSliderGrp(l="Value:", min=1, max=7000, f=True, v=1000,
-                                    cc="F_OceanWin.Scale=cmds.floatSliderGrp(OceanSettingsWindow.Scale_,q=True,v=True)")
+                                                     cc="F_OceanWin.Scale=cmds.floatSliderGrp("
+                                                        "OceanSettingsWindow.Scale_,q=True,v=True)")
     cmds.separator(st='in', w=450, h=10)
 
-    cmds.text(l="Ocean Frequency?")    
-    OceanSettingsWindow.Freq_=cmds.floatSliderGrp(l="Value:", min=1, max=10000, f=True, v=3000,
-                                cc="F_OceanWin.Freq=cmds.floatSliderGrp(OceanSettingsWindow.Freq_,q=True,v=True)")
+    cmds.text(l="Ocean Frequency?")
+    OceanSettingsWindow.Freq_ = cmds.floatSliderGrp(l="Value:", min=1, max=10000, f=True, v=3000,
+                                                    cc="F_OceanWin.Freq=cmds.floatSliderGrp("
+                                                       "OceanSettingsWindow.Freq_,q=True,v=True)")
     cmds.separator(st='in', w=450, h=10)
 
-    cmds.text(l="Ocean Wave Length Minimum?")    
-    OceanSettingsWindow.wave_Length_min_=cmds.floatSliderGrp(l="Value:", min=1, max=10000, f=True, v=0.3,
-            cc="F_OceanWin.wave_length_min = cmds.floatSliderGrp(OceanSettingsWindow.wave_Length_min_,q=True,v=True)")
+    cmds.text(l="Ocean Wave Length Minimum?")
+    OceanSettingsWindow.wave_Length_min_ = cmds.floatSliderGrp(l="Value:", min=1, max=10000, f=True, v=0.3,
+                                                               cc="F_OceanWin.wave_length_min = cmds.floatSliderGrp("
+                                                                  "OceanSettingsWindow.wave_Length_min_,q=True,"
+                                                                  "v=True)")
     cmds.separator(st='in', w=450, h=10)
 
     cmds.text(l="Ocean Wave Length Maximum?")
-    OceanSettingsWindow.wave_length_max_=cmds.floatSliderGrp(l="Value:", min=1, max=10000, f=True, v=4000,
-            cc="F_OceanWin.wave_length_max = cmds.floatSliderGrp(OceanSettingsWindow.wave_length_max_,q=True,v=True)")
+    OceanSettingsWindow.wave_length_max_ = cmds.floatSliderGrp(l="Value:", min=1, max=10000, f=True, v=4000,
+                                                               cc="F_OceanWin.wave_length_max = cmds.floatSliderGrp("
+                                                                  "OceanSettingsWindow.wave_length_max_,q=True,"
+                                                                  "v=True)")
     cmds.separator(st='in', w=450, h=40)
 
     cmds.button(l="Change", w=100, h=50, c="OceanSetup()")
     cmds.showWindow(ocean_menu)
+
 
 # #######################################   FUNCTIONS   ####################################
 
@@ -276,7 +314,7 @@ def TerrainBuilder():
 
     # check if the terrain exist and tells user to delete first before create another one
     if cmds.objExists(MainWindow.terrain_name):
-        cmds.warning ("You need to delete the previews Terrain to build another one")
+        cmds.warning("You need to delete the previews Terrain to build another one")
     # create the terrain according to values the user choose
     else:
         TerrainBuilder.Obj = cmds.polyPlane(n=MainWindow.terrain_name, w=opt_width, h=opt_height, sw=opt_sw, sh=opt_sh)
@@ -288,13 +326,14 @@ def TerrainBuilder():
 def DeleteTerrain():
     # check if the terrain exists and delete
     if cmds.objExists(MainWindow.terrain_name):
-        confirm_del=cmds.confirmDialog(m="Do you really want to delete the Terrain?", b=["Confirm", "Cancel"])
+        confirm_del = cmds.confirmDialog(m="Do you really want to delete the Terrain?", b=["Confirm", "Cancel"])
         if confirm_del == "Confirm":
             cmds.select(MainWindow.terrain_name)
             cmds.delete(MainWindow.terrain_name)
     else:
         # if terrain doesn't exist print message to user
-        cmds.warning ("There is no Terrain to delete")
+        cmds.warning("There is no Terrain to delete")
+
 
 # here I create a function to apply changes to the attributes of the ocean
 def OceanSetup():
@@ -302,6 +341,7 @@ def OceanSetup():
     cmds.setAttr(OceanBuilder.Shader + ".numFrequencies", OceanSettingsWindow.frequency)
     cmds.setAttr(OceanBuilder.Shader + ".waveLengthMin", OceanSettingsWindow.wave_length_min)
     cmds.setAttr(OceanBuilder.Shader + ".waveLengthMax", OceanSettingsWindow.wave_length_max)
+
 
 # here I have a function to check if the terrain exist before create a plane with an ocean shader applied
 def OceanBuilder():
@@ -311,9 +351,9 @@ def OceanBuilder():
 
     # here I check if the terrain exist before create the ocean
     if cmds.objExists(MainWindow.terrain_name):
-        OceanBuilder.Obj=cmds.polyPlane(n="Ocean", w=ocean_width, h=ocean_height)
+        OceanBuilder.Obj = cmds.polyPlane(n="Ocean", w=ocean_width, h=ocean_height)
         cmds.move(0, -5, 0)
-        OceanBuilder.Shader=cmds.shadingNode("oceanShader", asShader=True)
+        OceanBuilder.Shader = cmds.shadingNode("oceanShader", asShader=True)
         cmds.select(OceanBuilder.Obj)
         cmds.hyperShade(assign=OceanBuilder.Shader)
     # here is a warming to the user crate first the terrain
@@ -325,13 +365,13 @@ def OceanBuilder():
 
 # here I set two simple functions to move up and down the ocean
 def MoveOceanUP():
-        cmds.select(OceanBuilder.Obj)
-        cmds.move(0,2.5,0,r=True)
+    cmds.select(OceanBuilder.Obj)
+    cmds.move(0, 2.5, 0, r=True)
 
 
 def MoveOceanDOWN():
-        cmds.select(OceanBuilder.Obj)
-        cmds.move(0,-2.5,0,r=True)
+    cmds.select(OceanBuilder.Obj)
+    cmds.move(0, -2.5, 0, r=True)
 
 
 # change the display of the terrain to smooth view according user choice
@@ -353,18 +393,18 @@ def DeformTerrain():
         # here we identify the component type based on MainWindow.comp_type value
         if MainWindow.comp_type == 0:
             cmds.ConvertSelectionToVertices()
-            all_comp = cmds.ls(sl=True,fl=True)
+            all_comp = cmds.ls(sl=True, fl=True)
         elif MainWindow.comp_type == 1:
             cmds.ConvertSelectionToEdges()
-            all_comp = cmds.ls(sl=True,fl=True)
+            all_comp = cmds.ls(sl=True, fl=True)
         elif MainWindow.comp_type == 2:
             cmds.ConvertSelectionToFaces()
-            all_comp = cmds.ls(sl=True,fl=True)
+            all_comp = cmds.ls(sl=True, fl=True)
         else:
-            all_comp = cmds.ls(sl=True,fl=True)
+            all_comp = cmds.ls(sl=True, fl=True)
 
         # at this point we are just deforming the Terrain
-        for i in range (0, len(all_comp), MainWindow.FreqInd):
+        for i in range(0, len(all_comp), MainWindow.FreqInd):
             rand_selection = int(rand(0, len(all_comp)))
             cmds.select(cl=True)
             single_comp = all_comp[rand_selection]
@@ -374,19 +414,19 @@ def DeformTerrain():
             rand_y = rand(MainWindow.range_value_depth, MainWindow.range_value_height)
             cmds.move(rand_x, rand_y, rand_z, r=True)
             cmds.currentTime(current_frame)
-            current_frame = current_frame+1
+            current_frame = current_frame + 1
             time.sleep(MainWindow.AnimTime)
         cmds.DeleteHistory()
 
     # if terrain doesn't exist print message to user
     else:
-        cmds.warning ("There is no Terrain to Deform")
+        cmds.warning("There is no Terrain to Deform")
     cmds.select(clear=True)
 
 
 # here I create the rock gen function
 def RockGenerator():
-    current_frame=1
+    current_frame = 1
 
     rn_x = MainWindow.RockRIUserX
     rn_z = MainWindow.RockRIUserZ
@@ -399,17 +439,17 @@ def RockGenerator():
     if MainWindow.rock_place_on_selection:
         # add to a variable a list with all components in the selection
         selected_terrain = cmds.ls(sl=True, fl=True)
-        if len(selected_terrain)<3:
+        if len(selected_terrain) < 3:
             cmds.warning("Select a bigger area there")
         else:
             # creating a group to add the objects to it when every rock is created.
-            rock_group = cmds.group(empty=True,name="Rocks_grp#")
-            for i in range(1,rock_num):
+            rock_group = cmds.group(empty=True, name="Rocks_grp#")
+            for i in range(1, rock_num):
                 # creating a list of the objects selected by the user
                 random_mod = int(rand(0, len(selected_terrain)))
                 mod_obj = selected_terrain[random_mod]
-                #get the transform from the objects
-                mod_attr = cmds.xform(mod_obj,q=True,t=True)
+                # get the transform from the objects
+                mod_attr = cmds.xform(mod_obj, q=True, t=True)
                 # getting a random radius number from 1 to user limit input
                 rand_rad = rand(4, MainWindow.RockMaxR)
                 # calculating a number in relation to the random radius
@@ -422,13 +462,13 @@ def RockGenerator():
                 follow_obj = cmds.polySphere(n=rock_name, r=rand_rad, sx=rand_sub_d1, sy=rand_sub_d)[0]
 
                 # setting a random scale to the rock
-                cmds.setAttr(follow_obj+".scaleY", rand(0.9, 1.5))
-                cmds.setAttr(follow_obj+".rotateY", rand(0, 90))
-                cmds.setAttr(follow_obj+".rotateX", rand(0, 90))
-                cmds.setAttr(follow_obj+".rotateZ", rand(0, 90))
+                cmds.setAttr(follow_obj + ".scaleY", rand(0.9, 1.5))
+                cmds.setAttr(follow_obj + ".rotateY", rand(0, 90))
+                cmds.setAttr(follow_obj + ".rotateX", rand(0, 90))
+                cmds.setAttr(follow_obj + ".rotateZ", rand(0, 90))
 
                 # parenting the object to a group
-                cmds.parent(follow_obj,rock_group)
+                cmds.parent(follow_obj, rock_group)
                 # here I move the object to a random vertices on the plane
                 cmds.move(mod_attr[0], mod_attr[1], mod_attr[2])
                 cmds.ConvertSelectionToVertices()
@@ -436,14 +476,14 @@ def RockGenerator():
                 component_all = cmds.ls(sl=True, fl=True)
                 cmds.displaySmoothness(du=3, dv=3, pw=16, ps=4, po=3)
                 # with this loop I go through all selection and one by one I move them to the random location
-                for i in range(0,len(component_all)):
-                    rand_selection=int(rand(1,len(component_all)))
-                    single_comp=component_all[rand_selection]
+                for i in range(0, len(component_all)):
+                    rand_selection = int(rand(1, len(component_all)))
+                    single_comp = component_all[rand_selection]
                     cmds.select(single_comp)
                     random_x = rand(-move_num, move_num)
                     random_y = rand(-move_num, move_num)
                     random_z = rand(-move_num, move_num)
-                    cmds.move(random_x,random_y,random_z,r=True)
+                    cmds.move(random_x, random_y, random_z, r=True)
                 cmds.select(cl=True)
                 cmds.DeleteHistory()
 
@@ -455,26 +495,26 @@ def RockGenerator():
         vertices_selection = cmds.ls(sl=True, o=True)[0]
         sel_v = cmds.ls('{}.vtx[:]'.format(vertices_selection), fl=True)
         # creating a group to add the objects to it when every rock is created.
-        rock_group = cmds.group(empty=True,name="Rocks_grp#")
+        rock_group = cmds.group(empty=True, name="Rocks_grp#")
         if MainWindow.rock_place_on_terrain:
-            for i in range (1,rock_num) :
-                random_mod = int(rand(0,len(sel_v)))
+            for i in range(1, rock_num):
+                random_mod = int(rand(0, len(sel_v)))
                 mod_obj = sel_v[random_mod]
-                #get the transform from the objects
-                mod_attr = cmds.xform(mod_obj,q=True,t=True)
+                # get the transform from the objects
+                mod_attr = cmds.xform(mod_obj, q=True, t=True)
                 # getting a random radius number from 1 to user limit input
                 rand_rad = rand(4, MainWindow.RockMaxR)
                 # calculating a number in relation to the random radius
-                move_num = rand_rad*0.2
+                move_num = rand_rad * 0.2
                 # randomizing the amount of subdivisions to the object
-                rand_sub_d = int(rand(10,20))
+                rand_sub_d = int(rand(10, 20))
                 # randomizing the amount of subdivisions to the object
-                rand_sub_d1 = int(rand(10,20))
-                follow_obj = cmds.polySphere(n=rock_name,r=rand_rad,sx=rand_sub_d1,sy=rand_sub_d)[0]
-                cmds.setAttr(follow_obj+".scaleY",rand(0.9, 1.5))
-                cmds.setAttr(follow_obj+".rotateY",rand(0, 90))
-                cmds.setAttr(follow_obj+".rotateX",rand(0, 90))
-                cmds.setAttr(follow_obj+".rotateZ",rand(0, 90))
+                rand_sub_d1 = int(rand(10, 20))
+                follow_obj = cmds.polySphere(n=rock_name, r=rand_rad, sx=rand_sub_d1, sy=rand_sub_d)[0]
+                cmds.setAttr(follow_obj + ".scaleY", rand(0.9, 1.5))
+                cmds.setAttr(follow_obj + ".rotateY", rand(0, 90))
+                cmds.setAttr(follow_obj + ".rotateX", rand(0, 90))
+                cmds.setAttr(follow_obj + ".rotateZ", rand(0, 90))
                 # parenting the object to a group
                 cmds.parent(follow_obj, rock_group)
                 # here I move the object to a random vertices on the plane
@@ -486,7 +526,7 @@ def RockGenerator():
                 cmds.displaySmoothness(du=3, dv=3, pw=16, ps=4, po=3)
                 # with this loop I go through all selection and one by one I move them to the random location
                 for i in range(0, len(component_all)):
-                    rand_selection = int(rand(1,len(component_all)))
+                    rand_selection = int(rand(1, len(component_all)))
                     single_comp = component_all[rand_selection]
                     cmds.select(single_comp)
                     random_x = rand(-move_num, move_num)
@@ -495,30 +535,30 @@ def RockGenerator():
                     cmds.move(random_x, random_y, random_z, r=True)
                 cmds.select(cl=True)
                 cmds.DeleteHistory()
-        #here we have the script to generate rocks in the range determined by the user 
+        # here we have the script to generate rocks in the range determined by the user
 
         else:
-            for i in range (1, rock_num):
+            for i in range(1, rock_num):
                 # def. random num to move the rock to a random location X
-                ran_loc_x = rand(-rn_x,rn_x)
+                ran_loc_x = rand(-rn_x, rn_x)
                 # def. random num to move the rock to a random location Z
-                ran_loc_z = rand(-rn_z,rn_z)
+                ran_loc_z = rand(-rn_z, rn_z)
                 # getting a random radius number from 1 to user limit input
                 rand_rad = rand(4, MainWindow.RockMaxR)
                 # calculating a number in relation to the random radius
-                move_num = rand_rad*0.2
+                move_num = rand_rad * 0.2
                 # randomizing the amount of subdivisions to the object
-                rand_sub_d = int(rand(10,20))
+                rand_sub_d = int(rand(10, 20))
                 # Creating the object
                 obj = cmds.polySphere(n=rock_name, r=rand_rad, sx=rand_sub_d, sy=rand_sub_d)[0]
                 # setting a random scale to the rock
-                cmds.setAttr(obj+".scaleY", rand(0.9, 1.5))
+                cmds.setAttr(obj + ".scaleY", rand(0.9, 1.5))
                 # setting a random rotation Y
-                cmds.setAttr(obj+".rotateY", rand(0, 90))
+                cmds.setAttr(obj + ".rotateY", rand(0, 90))
                 # setting a random rotation X
-                cmds.setAttr(obj+".rotateX", rand(0, 90))
+                cmds.setAttr(obj + ".rotateX", rand(0, 90))
                 # setting a random rotation Z
-                cmds.setAttr(obj+".rotateZ", rand(0, 90))
+                cmds.setAttr(obj + ".rotateZ", rand(0, 90))
                 # parenting the object to a group
                 cmds.parent(obj, rock_group)
                 # here I move the object to an X,Z random location inside a range
@@ -534,65 +574,70 @@ def RockGenerator():
                     rand_selection = int(rand(0, len(component_all)))
                     single_comp = component_all[rand_selection]
                     cmds.select(single_comp)
-                    random_x = rand(-move_num, move_num); random_y = rand(-move_num, move_num); random_z = rand(-move_num, move_num)
+                    random_x = rand(-move_num, move_num)
+                    random_y = rand(-move_num, move_num)
+                    random_z = rand(-move_num, move_num)
                     cmds.move(random_x, random_y, random_z, r=True)
             cmds.select(cl=True)
             cmds.DeleteHistory()
 
     # check all existing rock groups
-    rock_grp_list = cmds.ls(sl=False )
+    rock_grp_list = cmds.ls(sl=False)
     rock_group_list2 = []
 
     for rock_grp_list in rock_grp_list:
-        ignore_string="|"                                                #crate a variable with a string to ignore it
-        result_groups = re.search('.*grp.*', rock_grp_list)                      #returns None if search fails
+        ignore_string = "|"  # crate a variable with a string to ignore it
+        result_groups = re.search('.*grp.*', rock_grp_list)  # returns None if search fails
         if ignore_string in str(result_groups):
             pass
-        elif result_groups:                                                    #here add the result of the groups to a list
+        elif result_groups:  # here add the result of the groups to a list
             rock_group_list2.append(rock_grp_list)
 
-    for x in rock_group_list2:                                            #here I compare the list generated when run the script at first and added new groups.
+    for x in rock_group_list2:  # here I compare the list generated when run the script at first and added new groups.
         if x not in NEW_ROCK_GROUP_LIST:
             NEW_ROCK_GROUP_LIST.append(x)
-            print (NEW_ROCK_GROUP_LIST)
+            print(NEW_ROCK_GROUP_LIST)
     # here I will remove the items from the text scroll and refresh with updated list
     cmds.textScrollList(MainWindow.RockGroups, e=True, ra=True)
     cmds.textScrollList(MainWindow.RockGroups, e=True, append=NEW_ROCK_GROUP_LIST)
 
 
-
-#here I create a function to change state of the checkbox
+# here I create a function to change state of the checkbox
 def CheckBoxWin():
-    MainWindow.rock_on_selection=cmds.checkBox(MainWindow.RockonSel_, q=True, value=True)
-    if MainWindow.rock_on_selection:                                       #when user choose to move rock to selection the other checkbox is disabled
+    MainWindow.rock_on_selection = cmds.checkBox(MainWindow.RockonSel_, q=True, value=True)
+    if MainWindow.rock_on_selection:  # when user choose to move rock to selection the other checkbox is disabled
         cmds.checkBox(MainWindow.RockonTer, e=True, en=False, v=False)
     else:
         cmds.checkBox(MainWindow.RockonTer, e=True, en=True)
 
 
-def SelectDirectory():                                                         #this function I create to user select the folder and list the files in a dropbox to the user
-        basic_filter = "Image Files (*.jpg *.jpeg *.tga *.png *.tiff *.bmp *.psd)"
-        SelectDirectory.my_dir = cmds.fileDialog2 (fileFilter=basic_filter, dialogStyle=2, fm=3)
-        SelectDirectory.Files= listdir(SelectDirectory.my_dir[0])
-        for items in SelectDirectory.Files:
-            file_endings = ('.jpg','JPG','.jpeg','.JPEG','.tga','.TGA','.png','.PNG','.tiff','.TIFF','.bmp','.BMP')
-            if items.endswith(file_endings):
-                cmds.menuItem(items)
-            else:
-                pass
+def SelectDirectory():  # this function I create to user select the folder and list the files in a dropbox to the user
+    basic_filter = "Image Files (*.jpg *.jpeg *.tga *.png *.tiff *.bmp *.psd)"
+    SelectDirectory.my_dir = cmds.fileDialog2(fileFilter=basic_filter, dialogStyle=2, fm=3)
+    SelectDirectory.Files = listdir(SelectDirectory.my_dir[0])
+    for items in SelectDirectory.Files:
+        file_endings = (
+            '.jpg', 'JPG', '.jpeg', '.JPEG', '.tga', '.TGA', '.png', '.PNG', '.tiff', '.TIFF', '.bmp', '.BMP')
+        if items.endswith(file_endings):
+            cmds.menuItem(items)
+        else:
+            pass
 
 
-def ClearDirectory():                                                       #this function is to clear the dropbox with the list of files
+def ClearDirectory():  # this function is to clear the dropbox with the list of files
     file_list = cmds.optionMenu('optionMenu', q=True, itemListLong=True)
     if file_list:
         cmds.deleteUI(file_list)
 
 
-def ShaderToGroup():                                                    #apply texture to the group of rocks
-    MainWindow.RockGrpSel = cmds.textScrollList(MainWindow.RockGroups, q=True, si=True) #fetch the group of rocks the user choose
+def ShaderToGroup():  # apply texture to the group of rocks
+    MainWindow.RockGrpSel = cmds.textScrollList(MainWindow.RockGroups, q=True,
+                                                si=True)  # fetch the group of rocks the user choose
     texture_name = MainWindow.text_file_choice[:-4]
-    #listing and saving existing materials to a variable
-    mat_list = sorted(set(cmds.ls([mat for item in cmds.ls(type='shadingEngine') for mat in cmds.listConnections(item) if cmds.sets(item, q=True)], materials=True)))
+    # listing and saving existing materials to a variable
+    mat_list = sorted(set(cmds.ls(
+        [mat for item in cmds.ls(type='shadingEngine') for mat in cmds.listConnections(item) if
+         cmds.sets(item, q=True)], materials=True)))
 
     # here I select all the objects inside the group and delete the first (group reference in the list)
     cmds.select(MainWindow.RockGrpSel, hierarchy=True)
@@ -601,35 +646,40 @@ def ShaderToGroup():                                                    #apply t
     del (list_objs[0])
 
     # apply texture if already exists
-    if (texture_name+"ShaderNode") in mat_list:
-        for ll in range(0,len(list_objs)):
-                cmds.select(list_objs[ll])
-                object=cmds.ls(sl=True)
-                cmds.sets(object, e=True, forceElement=texture_name+'RockMaterialGroup')
+    if (texture_name + "ShaderNode") in mat_list:
+        for ll in range(0, len(list_objs)):
+            cmds.select(list_objs[ll])
+            obj = cmds.ls(sl=True)
+            cmds.sets(obj, e=True, forceElement=texture_name + 'RockMaterialGroup')
     else:
         # start to create the shader and connect.
         selected_menu_item = cmds.optionMenu('optionMenu', q=True, value=True)
         file_r_node = cmds.shadingNode('file', name=texture_name, asTexture=True)
-        cmds.setAttr(texture_name +'.fileTextureName', SelectDirectory.my_dir[0] + '/' + selected_menu_item, type="string")
-        cmds.sets(name=texture_name+'RockMaterialGroup', renderable=True, empty=True)
+        cmds.setAttr(texture_name + '.fileTextureName', SelectDirectory.my_dir[0] + '/' + selected_menu_item,
+                     type="string")
+        cmds.sets(name=texture_name + 'RockMaterialGroup', renderable=True, empty=True)
         # create shader
-        ShaderNode = cmds.shadingNode('blinn', name=texture_name+'ShaderNode', asShader=True)
+        ShaderNode = cmds.shadingNode('blinn', name=texture_name + 'ShaderNode', asShader=True)
         file_r_node = cmds.shadingNode('file', name=texture_name, asTexture=True)
-        cmds.setAttr(texture_name +'.fileTextureName', SelectDirectory.my_dir[0] + '/' + selected_menu_item, type="string")
-        cmds.connectAttr(texture_name+'.outColor',texture_name+'ShaderNode'+'.color')
-        my2_dr_placer=cmds.shadingNode("place2dTexture", n="MyTxtPlacer", asUtility=True)
-        cmds.connectAttr(my2_dr_placer+".outUV",texture_name+".uvCoord", f=True)
-        cmds.surfaceShaderList(texture_name+'ShaderNode', add=texture_name+'RockMaterialGroup')
+        cmds.setAttr(texture_name + '.fileTextureName', SelectDirectory.my_dir[0] + '/' + selected_menu_item,
+                     type="string")
+        cmds.connectAttr(texture_name + '.outColor', texture_name + 'ShaderNode' + '.color')
+        my2_dr_placer = cmds.shadingNode("place2dTexture", n="MyTxtPlacer", asUtility=True)
+        cmds.connectAttr(my2_dr_placer + ".outUV", texture_name + ".uvCoord", f=True)
+        cmds.surfaceShaderList(texture_name + 'ShaderNode', add=texture_name + 'RockMaterialGroup')
         # here I apply texture for every object grouped
-        for ll in range(0,len(list_objs)):
-                cmds.select(list_objs[ll])
-                object = cmds.ls(sl=True)
-                cmds.sets(object, e=True, forceElement=texture_name+'RockMaterialGroup')
+        for ll in range(0, len(list_objs)):
+            cmds.select(list_objs[ll])
+            obj = cmds.ls(sl=True)
+            cmds.sets(obj, e=True, forceElement=texture_name + 'RockMaterialGroup')
 
         # here create variables to save name of the files and check if exist or not in the for loop
-        normal_map_file = [];       normal_map_exist = False
-        rough_map_file = [];        rough_map_exist = False
-        disp_map_file = [];         disp_map_exist = False
+        normal_map_file = []
+        normal_map_exist = False
+        rough_map_file = []
+        rough_map_exist = False
+        disp_map_file = []
+        disp_map_exist = False
 
         files_list_normal = SelectDirectory.Files
         files_list_rough = SelectDirectory.Files
@@ -638,12 +688,15 @@ def ShaderToGroup():                                                    #apply t
         # here I create a variable to split the string of the file name
         ref_name = list(texture_name)
         # here I set a variable to save the five first letters from the file
-        search_name = (ref_name[0]+ref_name[1]+ref_name[2]+ref_name[3]+ref_name[4])
+        search_name = (ref_name[0] + ref_name[1] + ref_name[2] + ref_name[3] + ref_name[4])
 
-        #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>#
-        # Here I have a sequence of FOR loop where I check in the directory/folder, files that has the same start string from the texture file first, then I check for the  #
-        # end if finish with map I'm looking for (*Normal.jpg, *Roughness.jpg,etc), after the second check if file founded is stored in a variable, also created a bool     #
-        # to use to install the map or not         <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<#
+        # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        # Here I have a sequence of FOR loop where I check in the directory/folder,
+        # files that has the same start string from the texture file first, then I check for the  #
+        # end if finish with map I'm looking for (*Normal.jpg, *Roughness.jpg,etc),
+        # after the second check if file founded is stored in a variable, also created a bool     #
+        # to use to install the map or not         <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
         for files_list_normal in files_list_normal:
             result_list = files_list_normal.startswith(search_name)
             if result_list:
@@ -655,28 +708,28 @@ def ShaderToGroup():                                                    #apply t
                     if normal_map_exist:
                         normal_node = cmds.shadingNode("file", name="NormalMap", asTexture=True)
                         bump_normal = cmds.shadingNode("bump2d", asUtility=True)
-                        cmds.setAttr(normal_node +".fileTextureName",
+                        cmds.setAttr(normal_node + ".fileTextureName",
                                      SelectDirectory.my_dir[0] + '/' + normal_map_file[0], type="string")
-                        cmds.connectAttr(normal_node +".outAlpha", bump_normal + ".bumpValue", f=True)
+                        cmds.connectAttr(normal_node + ".outAlpha", bump_normal + ".bumpValue", f=True)
                         cmds.connectAttr(bump_normal + ".outNormal", ShaderNode + ".normalCamera")
-                        cmds.connectAttr(my2_dr_placer+".outUV", normal_node+".uvCoord")
+                        cmds.connectAttr(my2_dr_placer + ".outUV", normal_node + ".uvCoord")
                         cmds.setAttr(bump_normal + ".bumpDepth", 0.29)
-                        del files_list_normal                                                                         #deleting variables
+                        del files_list_normal  # deleting variables
                         del normal_map_exist
         for files_list_rough in files_list_rough:
             result_list = files_list_rough.startswith(search_name)
             if result_list:
                 result2 = files_list_rough.endswith("Roughness.jpg")
                 if result2:
-                    rough_map_exist=True
+                    rough_map_exist = True
                     rough_map_file.append(files_list_rough)
                     # here install roughness map in case the file for normal map is founded
                     if rough_map_exist:
-                        rough_node=cmds.shadingNode("file", name="NormalMap", asTexture=True)
-                        cmds.setAttr(rough_node +".fileTextureName",
+                        rough_node = cmds.shadingNode("file", name="NormalMap", asTexture=True)
+                        cmds.setAttr(rough_node + ".fileTextureName",
                                      SelectDirectory.my_dir[0] + '/' + rough_map_file[0], type="string")
-                        cmds.connectAttr(rough_node+".outColor", ShaderNode+".ambientColor", f=True)
-                        cmds.connectAttr(my2_dr_placer+".outUV", rough_node+".uvCoord")
+                        cmds.connectAttr(rough_node + ".outColor", ShaderNode + ".ambientColor", f=True)
+                        cmds.connectAttr(my2_dr_placer + ".outUV", rough_node + ".uvCoord")
                         del files_list_rough
                         del rough_map_exist
         for files_list_disp in files_list_disp:
@@ -684,15 +737,15 @@ def ShaderToGroup():                                                    #apply t
             if result_list:
                 result2 = files_list_disp.endswith("Displacement.jpg")
                 if result2:
-                    disp_map_exist=True
+                    disp_map_exist = True
                     disp_map_file.append(files_list_disp)
                     # here install Displacement map in case the file for normal map is founded
                     if disp_map_exist:
-                        DispNode=cmds.shadingNode("file",name="NormalMap",asTexture=True)
-                        cmds.setAttr(DispNode +".fileTextureName",
+                        disp_node = cmds.shadingNode("file", name="NormalMap", asTexture=True)
+                        cmds.setAttr(disp_node + ".fileTextureName",
                                      SelectDirectory.my_dir[0] + '/' + disp_map_file[0], type="string")
-                        cmds.connectAttr(DispNode+".outColor", ShaderNode+".ambientColor", f=True)
-                        cmds.connectAttr(my2_dr_placer+".outUV", DispNode+".uvCoord")
+                        cmds.connectAttr(disp_node + ".outColor", ShaderNode + ".ambientColor", f=True)
+                        cmds.connectAttr(my2_dr_placer + ".outUV", disp_node + ".uvCoord")
                         # deleting variables
                         del files_list_disp
                         del disp_map_exist
@@ -700,16 +753,18 @@ def ShaderToGroup():                                                    #apply t
 
 # here I have a function to select the texture from the files in a selected folder, create and applying a shader
 def Shading():
-    Shading.texture_name= MainWindow.text_file_choice[:-4]
+    Shading.texture_name = MainWindow.text_file_choice[:-4]
     # listing and saving existing materials to a variable
-    mat_list = sorted(set(cmds.ls([mat for item in cmds.ls(type='shadingEngine') for mat in cmds.listConnections(item) if cmds.sets(item, q=True)], materials=True)))
-    object = cmds.ls(sl=True)
+    mat_list = sorted(set(cmds.ls(
+        [mat for item in cmds.ls(type='shadingEngine') for mat in cmds.listConnections(item) if
+         cmds.sets(item, q=True)], materials=True)))
+    obj = cmds.ls(sl=True)
     # check if the material already exist to apply directly and not create another material
     if (Shading.texture_name + "ShaderNode") in mat_list:
-        for ll in range(0,len(ListObj)):
-                cmds.select(ListObj[ll])
-                object = cmds.ls(sl=True)
-                cmds.sets(object, e=True, forceElement='imageMaterialGroup')
+        for ll in range(0, len(ListObj)):
+            cmds.select(ListObj[ll])
+            obj = cmds.ls(sl=True)
+            cmds.sets(obj, e=True, forceElement='imageMaterialGroup')
     else:
         # add the selected file to a variable
         selected_menu_item = cmds.optionMenu('optionMenu', q=True, value=True)
@@ -723,104 +778,104 @@ def Shading():
         cmds.setAttr(Shading.texture_name + '.fileTextureName', SelectDirectory.my_dir[0] + '/' + selected_menu_item,
                      type="string")
         cmds.connectAttr(Shading.texture_name + '.outColor', Shading.texture_name + 'ShaderNode' + '.color')
-        Shading.my_2D_placer=cmds.shadingNode("place2dTexture", n="MyTxtPlacer", asUtility=True)
+        Shading.my_2D_placer = cmds.shadingNode("place2dTexture", n="MyTxtPlacer", asUtility=True)
         cmds.connectAttr(Shading.my_2D_placer + ".outUV", Shading.texture_name + ".uvCoord", f=True)
         cmds.surfaceShaderList(Shading.texture_name + 'ShaderNode', add='imageMaterialGroup')
-        cmds.sets(object, e=True, forceElement='imageMaterialGroup')
+        cmds.sets(obj, e=True, forceElement='imageMaterialGroup')
         ShadingMaps()
 
 
 def ShadingMaps():
-        # here create variables to save name of the files and check if exist or not in the for loop
-        normal_map_file = [];       normal_map_exist = False
-        rough_map_file = [];        rough_map_exist = False
-        disp_map_file = [];         disp_map_exist = False
+    # here create variables to save name of the files and check if exist or not in the for loop
+    normal_map_file = []
+    normal_map_exist = False
+    rough_map_file = []
+    rough_map_exist = False
+    disp_map_file = []
+    disp_map_exist = False
 
-        files_list_normal = SelectDirectory.Files
-        files_list_rough = SelectDirectory.Files
-        files_list_disp = SelectDirectory.Files
-        # here I create a variable to split the string of the file name
-        ref_name = list(Shading.TextureName)
-        # here I set a variable to save the five first letters from the file
-        search_name = (ref_name[0]+ref_name[1]+ref_name[2]+ref_name[3]+ref_name[4])
+    files_list_normal = SelectDirectory.Files
+    files_list_rough = SelectDirectory.Files
+    files_list_disp = SelectDirectory.Files
+    # here I create a variable to split the string of the file name
+    ref_name = list(Shading.TextureName)
+    # here I set a variable to save the five first letters from the file
+    search_name = (ref_name[0] + ref_name[1] + ref_name[2] + ref_name[3] + ref_name[4])
 
-        # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-        # Here I have a sequence of FOR loop where I check in the directory/folder, files that has the same start string
-        # from the texture file first, then I check for the  #
-        # end if finish with map I'm looking for (*Normal.jpg, *Roughness.jpg,etc), after the second check if file
-        # founded is stored in a variable, also created a bool     #
-        # to use to install the map or not
-        # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    # Here I have a sequence of FOR loop where I check in the directory/folder, files that has the same start string
+    # from the texture file first, then I check for the  #
+    # end if finish with map I'm looking for (*Normal.jpg, *Roughness.jpg,etc), after the second check if file
+    # founded is stored in a variable, also created a bool     #
+    # to use to install the map or not
+    # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-        for files_list_normal in files_list_normal:
-            result_files = files_list_normal.startswith(search_name)
-            if result_files:
-                result2=files_list_normal.endswith("Normal.jpg")
-                if result2:
-                    normal_map_exist = True
-                    normal_map_file.append(files_list_normal)
-                    # here install normal map in case the file for normal map is founded
-                    if normal_map_exist:
-                        normal_node = cmds.shadingNode("file",name="NormalMap",asTexture=True)
-                        bump_normal = cmds.shadingNode("bump2d",asUtility=True)
-                        cmds.setAttr(normal_node +".fileTextureName",
-                                     SelectDirectory.my_dir[0] + '/' + normal_map_file[0], type="string")
-                        cmds.connectAttr(normal_node+".outAlpha",bump_normal+".bumpValue",f=True)
-                        cmds.connectAttr(bump_normal +".outNormal", Shading.ShaderNode + ".normalCamera")
-                        cmds.connectAttr(Shading.My2Dplacer + ".outUV", normal_node + ".uvCoord")
-                        cmds.setAttr(bump_normal+".bumpDepth",0.29)
-                        del files_list_normal
-                        del normal_map_exist
+    for files_list_normal in files_list_normal:
+        result_files = files_list_normal.startswith(search_name)
+        if result_files:
+            result2 = files_list_normal.endswith("Normal.jpg")
+            if result2:
+                normal_map_exist = True
+                normal_map_file.append(files_list_normal)
+                # here install normal map in case the file for normal map is founded
+                if normal_map_exist:
+                    normal_node = cmds.shadingNode("file", name="NormalMap", asTexture=True)
+                    bump_normal = cmds.shadingNode("bump2d", asUtility=True)
+                    cmds.setAttr(normal_node + ".fileTextureName",
+                                 SelectDirectory.my_dir[0] + '/' + normal_map_file[0], type="string")
+                    cmds.connectAttr(normal_node + ".outAlpha", bump_normal + ".bumpValue", f=True)
+                    cmds.connectAttr(bump_normal + ".outNormal", Shading.ShaderNode + ".normalCamera")
+                    cmds.connectAttr(Shading.My2Dplacer + ".outUV", normal_node + ".uvCoord")
+                    cmds.setAttr(bump_normal + ".bumpDepth", 0.29)
+                    del files_list_normal
+                    del normal_map_exist
 
-        for files_list_rough in files_list_rough:
-            result_files = files_list_rough.startswith(search_name)
-            if result_files:
-                result2 = files_list_rough.endswith("Roughness.jpg")
-                if result2:
-                    rough_map_exist = True
-                    rough_map_file.append(files_list_rough)
-                    # here install roughness map in case the file for normal map is founded
-                    if rough_map_exist:
-                        rough_node = cmds.shadingNode("file",name="NormalMap",asTexture=True)
-                        cmds.setAttr(rough_node +".fileTextureName",
-                                     SelectDirectory.my_dir[0] + '/' + rough_map_file[0], type="string")
-                        cmds.connectAttr(rough_node +".outColor", Shading.ShaderNode + ".ambientColor", f=True)
-                        cmds.connectAttr(Shading.My2Dplacer + ".outUV", rough_node + ".uvCoord")
-                        del files_list_rough
-                        del rough_map_exist
+    for files_list_rough in files_list_rough:
+        result_files = files_list_rough.startswith(search_name)
+        if result_files:
+            result2 = files_list_rough.endswith("Roughness.jpg")
+            if result2:
+                rough_map_exist = True
+                rough_map_file.append(files_list_rough)
+                # here install roughness map in case the file for normal map is founded
+                if rough_map_exist:
+                    rough_node = cmds.shadingNode("file", name="NormalMap", asTexture=True)
+                    cmds.setAttr(rough_node + ".fileTextureName",
+                                 SelectDirectory.my_dir[0] + '/' + rough_map_file[0], type="string")
+                    cmds.connectAttr(rough_node + ".outColor", Shading.ShaderNode + ".ambientColor", f=True)
+                    cmds.connectAttr(Shading.My2Dplacer + ".outUV", rough_node + ".uvCoord")
+                    del files_list_rough
+                    del rough_map_exist
 
-        for files_list_disp in files_list_disp:
-            result_files = files_list_disp.startswith(search_name)
-            if result_files:
-                result2 = files_list_disp.endswith("Displacement.jpg")
-                if result2:
-                    disp_map_exist = True
-                    disp_map_file.append(files_list_disp)
-                    # here install Displacement map in case the file for normal map is founded
-                    if disp_map_exist:
-                        disp_node = cmds.shadingNode("file",name="NormalMap",asTexture=True)
-                        cmds.setAttr(disp_node +".fileTextureName",
-                                     SelectDirectory.my_dir[0] + '/' + disp_map_file[0], type="string")
-                        cmds.connectAttr(disp_node +".outColor", Shading.ShaderNode + ".ambientColor", f=True)
-                        cmds.connectAttr(Shading.My2Dplacer + ".outUV", disp_node + ".uvCoord")
-                        del files_list_disp
-                        del disp_map_exist
+    for files_list_disp in files_list_disp:
+        result_files = files_list_disp.startswith(search_name)
+        if result_files:
+            result2 = files_list_disp.endswith("Displacement.jpg")
+            if result2:
+                disp_map_exist = True
+                disp_map_file.append(files_list_disp)
+                # here install Displacement map in case the file for normal map is founded
+                if disp_map_exist:
+                    disp_node = cmds.shadingNode("file", name="NormalMap", asTexture=True)
+                    cmds.setAttr(disp_node + ".fileTextureName",
+                                 SelectDirectory.my_dir[0] + '/' + disp_map_file[0], type="string")
+                    cmds.connectAttr(disp_node + ".outColor", Shading.ShaderNode + ".ambientColor", f=True)
+                    cmds.connectAttr(Shading.My2Dplacer + ".outUV", disp_node + ".uvCoord")
+                    del files_list_disp
+                    del disp_map_exist
+
 
 # ################################    START SCRIPT   #############################
 
 # for loop to check and store the names of groups
 for LIST_OF_ROCK_GROUPS in LIST_OF_ROCK_GROUPS:
-  IgnoreString="|"
-  # returns None if search fails
-  result = re.search('.*grp.*', LIST_OF_ROCK_GROUPS)
-  if IgnoreString in str(result):
-    pass
-  elif result:
-      # here I store the names
-    NEW_ROCK_GROUP_LIST.append(LIST_OF_ROCK_GROUPS)
+    IgnoreString = "|"
+    # returns None if search fails
+    result = re.search('.*grp.*', LIST_OF_ROCK_GROUPS)
+    if IgnoreString in str(result):
+        pass
+    elif result:
+        # here I store the names
+        NEW_ROCK_GROUP_LIST.append(LIST_OF_ROCK_GROUPS)
 
 MainWindow()
-
-
-
-
