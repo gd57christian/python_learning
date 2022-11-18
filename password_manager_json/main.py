@@ -30,6 +30,7 @@ def generate_password():
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 
 def save():
+    # fetching the values from the UI
     website = website_entry.get()
     email = email_entry.get()
     password = password_entry.get()
@@ -40,6 +41,7 @@ def save():
         }
     }
 
+    # check if there is data to save
     if len(website) == 0 or len(password) == 0:
         messagebox.showinfo(title="Oops", message="Please make sure you haven't left any fields empty.")
     else:
@@ -69,6 +71,7 @@ def find_password():
     try:
         with open("data.json") as data_file:
             data = json.load(data_file)
+    # pop a message in case the file does not exist
     except FileNotFoundError:
         messagebox.showinfo(title="Error", message="No Data File Found.")
     else:
