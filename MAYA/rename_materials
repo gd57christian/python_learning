@@ -1,0 +1,146 @@
+import maya.cmds as cmds
+
+rename_all = {}
+
+def list_materials_recursive(root_node):
+    unique_materials = set()  # Use a set to store unique material names
+    # Check if the node has materials
+    if cmds.nodeType(root_node) == 'mesh':
+        shape_node = root_node
+        # List connections of the shape node
+        connections = cmds.listConnections(shape_node, type='shadingEngine')
+        # Filter out only materials from the connections and add to the set
+        materials = cmds.ls(cmds.listConnections(connections), materials=True)
+        unique_materials.update(materials)
+
+    # Recursively check children
+    children = cmds.listRelatives(root_node, children=True, fullPath=True) or []
+    for child in children:
+        unique_materials.update(list_materials_recursive(child))  # Update the set with unique materials from children
+
+    new_unique_list = []
+
+    [new_unique_list.append(item) for item in unique_materials if item not in new_unique_list]
+
+    return new_unique_list
+
+
+def get_selected_object_and_materials():
+    # Get the selected object
+    selected_objects = cmds.ls(selection=True)
+    if not selected_objects:
+        cmds.warning("Please select an object in the scene.")
+        return None, []
+
+    selected_object = selected_objects[0]
+    # List materials recursively for the selected object and its children
+    materials = list_materials_recursive(selected_object)
+    return selected_object, materials
+
+
+def update_new_name(prefix_field, asset_name_field, current_name_field, new_name_field):
+    # Update the new name based on prefix, asset name, and current material name
+    prefix = cmds.textField(prefix_field, query=True, text=True)
+    asset_name = cmds.textField(asset_name_field, query=True, text=True)
+    current_name = cmds.textField(current_name_field, query=True, text=True)
+    new_name = prefix + asset_name + '_' + current_name
+    cmds.textField(new_name_field, edit=True, text=new_name)
+
+
+def create_rename_materials_window():
+
+    # Get selected object and associated materials
+    selected_object, materials = get_selected_object_and_materials()
+    if not selected_object:
+        return  # Exit if no object is selected
+
+    # Create window
+    window_name = "RenameMaterialsWindow"
+    if cmds.window(window_name, exists=True):
+        cmds.deleteUI(window_name)
+    window = cmds.window(window_name, title="Rename Materials", sizeable=True, widthHeight=(1200, 1200))
+
+    # Main layout
+    main_layout = cmds.columnLayout(adjustableColumn=True)
+
+    # Selected object label
+    cmds.text(label="Selected Object: " + selected_object)
+
+    # Scroll layout for materials list
+    scroll_layout = cmds.scrollLayout(horizontalScrollBarThickness=10, verticalScrollBarThickness=10)
+    column_layout = cmds.columnLayout(adjustableColumn=True)
+
+        # List materials with editable fields
+    for material in materials:
+        # Define a closure to create a function that captures the correct text fields for each row layout
+        def make_update_new_name_func(material_name, prefix_field, asset_name_field, current_name_field, new_name_field, checkbox):
+            def update_new_name_field(*args):
+                # Update the new name based on prefix, asset name, and current material name
+                print(checkbox)
+                material = cmds.text(material_name, query=True, label=True)
+                prefix = cmds.textField(prefix_field, query=True, text=True)
+                asset_name = cmds.textField(asset_name_field, query=True, text=True)
+                current_name = cmds.textField(current_name_field, query=True, text=True)
+                checkbox_bool = cmds.checkBox(checkbox, query=True, value=True)
+                print(checkbox_bool)
+                new_name = prefix + asset_name + current_name
+                cmds.textField(new_name_field, edit=True, text=new_name)
+                rename_all[material] = [new_name, checkbox_bool]
+                print(material)
+
+            return update_new_name_field
+
+        row_layout = cmds.rowLayout(nc=7, columnWidth6=(150, 50, 100, 100, 50, 300))
+        material_text_field = cmds.text(label=material, width=150)
+        prefix_field = cmds.textField(text="M_", width=50)
+        asset_name_field = cmds.textField(text=selected_object+'_', width=150)
+        current_name_field = cmds.textField(text=material, width=150)
+        checkbox = cmds.checkBox(label="", value=True, width=50)
+        new_name_field = cmds.textField(text=(cmds.textField(prefix_field, query=True, text=True) +
+                                              cmds.textField(asset_name_field, query=True, text=True) +
+                                              cmds.textField(current_name_field, query=True, text=True)), width=300, editable=False)
+
+        # Connect the update_new_name_field function to the changeCommand of current_name_field
+        cmds.textField(prefix_field, edit=True,
+                       changeCommand=make_update_new_name_func(material_text_field, prefix_field, asset_name_field, current_name_field,
+                                                               new_name_field, checkbox))
+        cmds.textField(asset_name_field, edit=True,
+                       changeCommand=make_update_new_name_func(material_text_field, prefix_field, asset_name_field, current_name_field,
+                                                               new_name_field, checkbox))
+        cmds.textField(current_name_field, edit=True,
+                       changeCommand=make_update_new_name_func(material_text_field, prefix_field, asset_name_field, current_name_field,
+                                                               new_name_field, checkbox))
+        cmds.checkBox(checkbox, edit=True,
+                       changeCommand=make_update_new_name_func(material_text_field, prefix_field, asset_name_field,
+                                                               current_name_field,
+                                                               new_name_field, checkbox))
+        #rows_layout.append(row_layout)
+        key = cmds.text(material_text_field, query=True, label=True)
+        print(key)
+        key_value = cmds.textField(new_name_field, query=True, text=True)
+        checkbox_bool = True
+        rename_all[key] = [key_value, checkbox_bool]
+
+
+        cmds.setParent(column_layout)
+
+
+    cmds.setParent(scroll_layout)
+
+    # Rename button
+    cmds.setParent(main_layout)
+    cmds.button(label="Rename Selected Materials", command=rename_selected_materials)
+
+
+    cmds.showWindow(window)
+
+def rename_selected_materials(*args):
+    print(rename_all)
+    for old_name, (new_name, bool) in rename_all.items():
+        if bool:  # Check if the boolean value is True
+            cmds.rename(old_name, new_name)
+        else:
+            pass
+
+
+create_rename_materials_window()
